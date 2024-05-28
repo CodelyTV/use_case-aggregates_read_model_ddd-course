@@ -51,6 +51,16 @@ CREATE TABLE shop.users (
 	status VARCHAR(255)
 );
 
+CREATE TABLE shop.products (
+	id UUID PRIMARY KEY,
+	name VARCHAR,
+	price_amount NUMERIC,
+	price_currency VARCHAR,
+	image_urls TEXT[],
+	featured_review JSONB,
+	rating NUMERIC
+);
+
 CREATE TABLE shop.product_reviews (
 	id UUID PRIMARY KEY,
 	user_id UUID REFERENCES shop.users(id),

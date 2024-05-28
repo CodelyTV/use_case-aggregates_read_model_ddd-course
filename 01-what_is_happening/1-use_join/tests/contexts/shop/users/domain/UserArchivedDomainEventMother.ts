@@ -1,3 +1,5 @@
+import { faker } from "@faker-js/faker";
+
 import { UserArchivedDomainEvent } from "../../../../../src/contexts/shop/users/domain/UserArchivedDomainEvent";
 import { DateMother } from "./DateMother";
 import { UserIdMother } from "./UserIdMother";
@@ -8,6 +10,10 @@ export class UserArchivedDomainEventMother {
 	}
 
 	static fromToday(): UserArchivedDomainEvent {
-		return new UserArchivedDomainEvent(UserIdMother.create().value, DateMother.today());
+		return new UserArchivedDomainEvent(
+			UserIdMother.create().value,
+			faker.string.uuid(),
+			DateMother.today(),
+		);
 	}
 }

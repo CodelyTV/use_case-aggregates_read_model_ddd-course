@@ -23,8 +23,8 @@ export class ProductReviewCreator {
 			productId,
 			rating,
 			comment,
-			user.name.value,
-			user.profilePicture.value,
+			user.name,
+			user.profilePicture,
 		);
 
 		await this.repository.save(product);

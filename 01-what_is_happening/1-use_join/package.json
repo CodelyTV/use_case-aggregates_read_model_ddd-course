@@ -1,5 +1,5 @@
 {
-  "name": "ts-aggregates-example",
+  "name": "codely",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -22,9 +22,9 @@
     "eslint-config-next": "14.2.3",
     "fp-ts": "^2.16.6",
     "io-ts": "^2.2.21",
-    "postgres": "^3.4",
     "next": "14.2",
     "postcss": "8.4.38",
+    "postgres": "^3.4",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "reflect-metadata": "^0.2.2",
@@ -33,6 +33,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@codelytv/primitives-type": "1.0.5",
     "@faker-js/faker": "^8.4.1",
     "@types/amqplib": "^0.10.5",
     "@types/jest": "^29.5.12",

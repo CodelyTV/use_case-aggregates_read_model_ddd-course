@@ -13,5 +13,5 @@ export abstract class Email extends AggregateRoot {
 		super();
 	}
 
-	abstract toPrimitives(): any;
+	abstract toPrimitives(): unknown;
 }

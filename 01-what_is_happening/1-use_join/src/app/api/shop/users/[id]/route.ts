@@ -1,3 +1,4 @@
+import { Primitives } from "@codelytv/primitives-type";
 import { isLeft } from "fp-ts/Either";
 import * as t from "io-ts";
 import { PathReporter } from "io-ts/PathReporter";
@@ -9,7 +10,7 @@ import { RabbitMqEventBus } from "../../../../../contexts/shared/infrastructure/
 import { PostgresConnection } from "../../../../../contexts/shared/infrastructure/PostgresConnection";
 import { UserRegistrar } from "../../../../../contexts/shop/users/application/registrar/UserRegistrar";
 import { UserSearcher } from "../../../../../contexts/shop/users/application/search/UserSearcher";
-import { UserPrimitives } from "../../../../../contexts/shop/users/domain/User";
+import { User } from "../../../../../contexts/shop/users/domain/User";
 import { PostgresUserRepository } from "../../../../../contexts/shop/users/infrastructure/PostgresUserRepository";
 
 const CreateUserRequest = t.type({ name: t.string, email: t.string, profilePicture: t.string });
@@ -41,7 +42,7 @@ export async function PUT(
 export async function GET(
 	_request: Request,
 	{ params: { id } }: { params: { id: string } },
-): Promise<NextResponse<UserPrimitives> | Response> {
+): Promise<NextResponse<Primitives<User>> | Response> {
 	const searcher = new UserSearcher(new PostgresUserRepository(new PostgresConnection()));
 
 	const user = await searcher.search(id);

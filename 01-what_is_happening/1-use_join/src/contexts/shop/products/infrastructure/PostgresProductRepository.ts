@@ -27,7 +27,7 @@ export class PostgresProductRepository implements ProductRepository {
 		image_urls as imageUrls,
 		featured_review as featuredReview,
         rating as rating
-	FROM shop__products__view
+	FROM shop.products
 	WHERE id='${id.value}'
 	GROUP BY id
   `;
@@ -63,7 +63,7 @@ export class PostgresProductRepository implements ProductRepository {
                 image_urls as imageUrls,
                 featured_review as featuredReview,
                 rating as rating
-            FROM shop__products__view
+            FROM shop.products
             GROUP BY id
 	`;
 

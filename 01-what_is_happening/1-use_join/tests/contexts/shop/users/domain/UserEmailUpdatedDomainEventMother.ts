@@ -1,3 +1,5 @@
+import { faker } from "@faker-js/faker";
+
 import {
 	UserEmailUpdatedDomainEvent,
 	UserEmailUpdatedDomainEventPrimitives,
@@ -16,7 +18,12 @@ export class UserEmailUpdatedDomainEventMother {
 			...params,
 		};
 
-		return new UserEmailUpdatedDomainEvent(primitives.id, primitives.email, primitives.occurredOn);
+		return new UserEmailUpdatedDomainEvent(
+			primitives.id,
+			primitives.email,
+			faker.string.uuid(),
+			primitives.occurredOn,
+		);
 	}
 
 	static fromToday(): UserEmailUpdatedDomainEvent {
