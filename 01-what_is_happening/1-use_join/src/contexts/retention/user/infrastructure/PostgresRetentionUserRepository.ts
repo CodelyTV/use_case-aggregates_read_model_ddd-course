@@ -1,6 +1,6 @@
 import { Service } from "diod";
 
-import { MariaDBConnection } from "../../../shared/infrastructure/MariaDBConnection";
+import { PostgresConnection } from "../../../shared/infrastructure/PostgresConnection";
 import { UserId } from "../../../shop/users/domain/UserId";
 import { RetentionUser } from "../domain/RetentionUser";
 import { RetentionUserRepository } from "../domain/RetentionUserRepository";
@@ -11,8 +11,8 @@ type DatabaseUser = {
 };
 
 @Service()
-export class MySqlRetentionUserRepository extends RetentionUserRepository {
-	constructor(private readonly connection: MariaDBConnection) {
+export class PostgresRetentionUserRepository extends RetentionUserRepository {
+	constructor(private readonly connection: PostgresConnection) {
 		super();
 	}
 
@@ -23,14 +23,14 @@ export class MySqlRetentionUserRepository extends RetentionUserRepository {
 		}`;
 
 		const query = `
-			INSERT INTO retention__users (id, last_activity_date)
+			INSERT INTO retention.users (id, last_activity_date)
 			VALUES ('${userPrimitives.id}', '${date}');`;
 
 		await this.connection.execute(query);
 	}
 
 	async search(id: UserId): Promise<RetentionUser | null> {
-		const query = `SELECT id, last_activity_date FROM retention__users WHERE id = '${id.value}';`;
+		const query = `SELECT id, last_activity_date FROM retention.users WHERE id = '${id.value}';`;
 
 		const result = await this.connection.searchOne<DatabaseUser>(query);
 

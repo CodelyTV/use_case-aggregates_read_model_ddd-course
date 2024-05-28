@@ -1,12 +1,12 @@
 import { DomainEventFailover } from "../../../../contexts/shared/infrastructure/event_bus/failover/DomainEventFailover";
 import { RabbitMqConnection } from "../../../../contexts/shared/infrastructure/event_bus/rabbitmq/RabbitMqConnection";
 import { RabbitMqEventBus } from "../../../../contexts/shared/infrastructure/event_bus/rabbitmq/RabbitMqEventBus";
-import { MariaDBConnection } from "../../../../contexts/shared/infrastructure/MariaDBConnection";
+import { PostgresConnection } from "../../../../contexts/shared/infrastructure/PostgresConnection";
 
 export async function POST(): Promise<Response> {
 	const eventBus = new RabbitMqEventBus(
 		new RabbitMqConnection(),
-		new DomainEventFailover(new MariaDBConnection()),
+		new DomainEventFailover(new PostgresConnection()),
 	);
 
 	await eventBus.publishFromFailover();

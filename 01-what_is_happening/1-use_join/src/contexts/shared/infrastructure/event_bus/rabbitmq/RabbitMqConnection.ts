@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import amqplib, { ConsumeMessage } from "amqplib";
 import { Service } from "diod";
 
@@ -176,9 +177,12 @@ export class RabbitMqConnection {
 
 	private incrementRedeliveryCount(message: ConsumeMessage) {
 		if (this.hasBeenRedelivered(message)) {
+			// @ts-ignore
 			const count = parseInt(message.properties.headers["redelivery_count"], 10);
+			// @ts-ignore
 			message.properties.headers["redelivery_count"] = count + 1;
 		} else {
+			// @ts-ignore
 			message.properties.headers["redelivery_count"] = 1;
 		}
 
@@ -186,6 +190,7 @@ export class RabbitMqConnection {
 	}
 
 	private hasBeenRedelivered(message: ConsumeMessage) {
+		// @ts-ignore
 		return message.properties.headers["redelivery_count"] !== undefined;
 	}
 }

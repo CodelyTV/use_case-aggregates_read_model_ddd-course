@@ -3,11 +3,11 @@ import * as t from "io-ts";
 import { PathReporter } from "io-ts/PathReporter";
 import { NextRequest } from "next/server";
 
-import { MariaDBConnection } from "../../../../../contexts/shared/infrastructure/MariaDBConnection";
+import { PostgresConnection } from "../../../../../contexts/shared/infrastructure/PostgresConnection";
 import { ProductReviewCreator } from "../../../../../contexts/shop/product_reviews/application/create/ProductReviewCreator";
-import { MySqlProductReviewRepository } from "../../../../../contexts/shop/product_reviews/infrastructure/MySqlProductReviewRepository";
+import { PostgresProductReviewRepository } from "../../../../../contexts/shop/product_reviews/infrastructure/PostgresProductReviewRepository";
 import { UserFinder } from "../../../../../contexts/shop/users/application/find/UserFinder";
-import { MySqlUserRepository } from "../../../../../contexts/shop/users/infrastructure/MySqlUserRepository";
+import { PostgresUserRepository } from "../../../../../contexts/shop/users/infrastructure/PostgresUserRepository";
 
 const CreateProductReviewRequest = t.type({
 	userId: t.string,
@@ -31,8 +31,8 @@ export async function PUT(
 	const body = validatedRequest.right;
 
 	await new ProductReviewCreator(
-		new MySqlProductReviewRepository(new MariaDBConnection()),
-		new UserFinder(new MySqlUserRepository(new MariaDBConnection())),
+		new PostgresProductReviewRepository(new PostgresConnection()),
+		new UserFinder(new PostgresUserRepository(new PostgresConnection())),
 	).create(id, body.userId, body.productId, body.rating, body.comment);
 
 	return new Response("", { status: 201 });

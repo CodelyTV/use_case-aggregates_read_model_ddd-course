@@ -1,3 +1,4 @@
+/* eslint-disable no-console,@typescript-eslint/ban-ts-comment */
 import "reflect-metadata";
 
 import { ConsumeMessage } from "amqplib";
@@ -42,15 +43,19 @@ function consume(subscriber: DomainEventSubscriber<DomainEvent>) {
 		try {
 			await subscriber.on(domainEvent);
 		} catch (error) {
-			await handleError(message, subscriber.name());
+			await handleError(message, subscriber.name(), error as Error);
 		} finally {
 			await connection.ack(message);
 		}
 	};
 }
 
-async function handleError(message: ConsumeMessage, queueName: string): Promise<void> {
-	console.log(`Error consuming ${message.fields.routingKey}`);
+async function handleError(
+	message: ConsumeMessage,
+	queueName: string,
+	error: Error,
+): Promise<void> {
+	console.log(`Error consuming ${message.fields.routingKey}`, error.message);
 
 	if (hasBeenRedeliveredTooMuch(message)) {
 		console.log(`--- To dead letter`);
@@ -63,6 +68,7 @@ async function handleError(message: ConsumeMessage, queueName: string): Promise<
 
 function hasBeenRedeliveredTooMuch(message: ConsumeMessage): boolean {
 	if (hasBeenRedelivered(message)) {
+		// @ts-ignore
 		const count = parseInt(message.properties.headers["redelivery_count"], 10);
 
 		return count >= maxRetries;
@@ -72,6 +78,7 @@ function hasBeenRedeliveredTooMuch(message: ConsumeMessage): boolean {
 }
 
 function hasBeenRedelivered(message: ConsumeMessage): boolean {
+	// @ts-ignore
 	return message.properties.headers["redelivery_count"] !== undefined;
 }
 

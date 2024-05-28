@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 
-import { MariaDBConnection } from "../../../../../contexts/shared/infrastructure/MariaDBConnection";
+import { PostgresConnection } from "../../../../../contexts/shared/infrastructure/PostgresConnection";
 import { ProductSearcher } from "../../../../../contexts/shop/products/application/search/ProductSearcher";
 import { ProductPrimitives } from "../../../../../contexts/shop/products/domain/Product";
-import { MySqlProductRepository } from "../../../../../contexts/shop/products/infrastructure/MySqlProductRepository";
+import { PostgresProductRepository } from "../../../../../contexts/shop/products/infrastructure/PostgresProductRepository";
 
 export async function GET(
 	_request: Request,
 	{ params: { id } }: { params: { id: string } },
 ): Promise<NextResponse<ProductPrimitives> | Response> {
-	const searcher = new ProductSearcher(new MySqlProductRepository(new MariaDBConnection()));
+	const searcher = new ProductSearcher(new PostgresProductRepository(new PostgresConnection()));
 
 	const product = await searcher.search(id);
 

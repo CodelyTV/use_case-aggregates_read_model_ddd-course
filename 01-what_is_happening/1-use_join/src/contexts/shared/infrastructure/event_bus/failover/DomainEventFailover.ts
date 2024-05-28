@@ -1,6 +1,6 @@
 import { Service } from "diod";
 
-import { MariaDBConnection } from "../../MariaDBConnection";
+import { PostgresConnection } from "../../PostgresConnection";
 
 type DatabaseEvent = {
 	eventId: string;
@@ -10,7 +10,7 @@ type DatabaseEvent = {
 
 @Service()
 export class DomainEventFailover {
-	constructor(private readonly connection: MariaDBConnection) {}
+	constructor(private readonly connection: PostgresConnection) {}
 
 	async publish(eventId: string, eventName: string, serializedEvent: string): Promise<void> {
 		const query = `INSERT INTO shared__failover_domain_events (eventId, eventName, body) VALUES ('${eventId}', '${eventName}', '${serializedEvent}')`;

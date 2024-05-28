@@ -1,4 +1,4 @@
-import { MariaDBConnection } from "../../../shared/infrastructure/MariaDBConnection";
+import { PostgresConnection } from "../../../shared/infrastructure/PostgresConnection";
 import { Product } from "../domain/Product";
 import { ProductFeaturedReviewPrimitives } from "../domain/ProductFeaturedReview";
 import { ProductId } from "../domain/ProductId";
@@ -14,8 +14,8 @@ type DatabaseProduct = {
 	rating: number | null;
 };
 
-export class MySqlProductRepository implements ProductRepository {
-	constructor(private readonly connection: MariaDBConnection) {}
+export class PostgresProductRepository implements ProductRepository {
+	constructor(private readonly connection: PostgresConnection) {}
 
 	async search(id: ProductId): Promise<Product | null> {
 		const query = `

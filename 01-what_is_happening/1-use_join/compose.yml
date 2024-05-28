@@ -1,21 +1,19 @@
-version: '3'
 services:
-  3-retry_dead_letter-mysql:
-    image: mariadb:latest
+  1_1_add_field-postgres:
+    image: postgres:latest
     restart: always
+
     environment:
-      MYSQL_ROOT_PASSWORD: adminpassword
-      MYSQL_DATABASE: ecommerce
-      MYSQL_USER: codely
-      MYSQL_PASSWORD: c0d3ly7v
-      TZ: UTC
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: codely
+      POSTGRES_PASSWORD: c0d3ly7v
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/postgresql/data
       - ./databases/ecommerce.sql:/docker-entrypoint-initdb.d/init.sql
 
-  3-retry_dead_letter-rabbitmq:
+  1_1_add_field-rabbitmq:
     image: 'rabbitmq:3.12-management'
     restart: unless-stopped
     ports:
