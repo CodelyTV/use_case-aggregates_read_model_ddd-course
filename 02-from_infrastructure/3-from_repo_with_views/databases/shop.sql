@@ -23,11 +23,24 @@ CREATE TABLE shop.product_reviews (
 	comment VARCHAR(500)
 );
 
-INSERT INTO shop.products (id, name, price_amount, price_currency, image_urls) VALUES
-	('8d5f5b10-6f34-4421-a9ee-7a3a0e5a5be8', 'Macbook Pro', 19.99, 'USD', ARRAY['https://example.com/image1.jpg', 'https://example.com/image2.jpg']);
-
-INSERT INTO shop.products (id, name, price_amount, price_currency, image_urls) VALUES
-	('d9e41410-bf0a-4ada-887e-8b2d5e4e9f79', 'Microsoft Surface', 49.99, 'EUR', ARRAY['https://example.com/image3.jpg', 'https://example.com/image4.jpg']);
-
-INSERT INTO shop.products (id, name, price_amount, price_currency, image_urls) VALUES
-	('c3e1d2b0-6d69-4c79-b8f0-f2c0eb733e77', 'Framework laptop', 29.99, 'USD', ARRAY['https://example.com/image5.jpg', 'https://example.com/image6.jpg']);
+CREATE VIEW shop.product_with_reviews AS
+SELECT
+	p.id,
+	p.name,
+	p.price_amount AS amount,
+	p.price_currency AS currency,
+	p.image_urls,
+	COALESCE(
+		json_agg(
+			json_build_object(
+					'userName', u.name,
+					'userProfilePictureUrl', u.profile_picture,
+					'reviewRating', r.rating,
+					'reviewComment', r.comment
+			) ORDER BY r.rating DESC
+		) FILTER (WHERE r.id IS NOT NULL AND r.rating >= 4), '[]'
+	) AS latest_top_reviews
+FROM shop.products p
+	LEFT JOIN shop.product_reviews r ON p.id = r.product_id
+	LEFT JOIN shop.users u ON r.user_id = u.id
+GROUP BY p.id;

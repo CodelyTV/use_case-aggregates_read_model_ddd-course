@@ -12,7 +12,7 @@ import {
 } from "../../../../../contexts/shop/product_reviews/application/create/ProductReviewCreator";
 import { PostgresProductReviewRepository } from "../../../../../contexts/shop/product_reviews/infrastructure/PostgresProductReviewRepository";
 import { ProductFinder } from "../../../../../contexts/shop/products/application/find/ProductFinder";
-import { PostgresWithJoinsProductRepository } from "../../../../../contexts/shop/products/infrastructure/PostgresWithJoinsProductRepository";
+import { PostgresWithViewsProductRepository } from "../../../../../contexts/shop/products/infrastructure/PostgresWithViewsProductRepository";
 import { UserFinder } from "../../../../../contexts/shop/users/application/find/UserFinder";
 import { PostgresUserRepository } from "../../../../../contexts/shop/users/infrastructure/PostgresUserRepository";
 
@@ -44,7 +44,7 @@ export async function PUT(
 
 	const creator = new ProductReviewCreator(
 		new UserFinder(userRepository),
-		new ProductFinder(new PostgresWithJoinsProductRepository(postgresConnection)),
+		new ProductFinder(new PostgresWithViewsProductRepository(postgresConnection)),
 		reviewRepository,
 	);
 
