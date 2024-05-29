@@ -1,7 +1,11 @@
 import { ProductFinder } from "../../../products/application/find/ProductFinder";
+import { ProductDoesNotExistError } from "../../../products/domain/ProductDoesNotExistError";
 import { UserFinder } from "../../../users/application/find/UserFinder";
+import { UserDoesNotExistError } from "../../../users/domain/UserDoesNotExistError";
 import { ProductReview } from "../../domain/ProductReview";
 import { ProductReviewRepository } from "../../domain/ProductReviewRepository";
+
+export type ProductReviewCreatorErrors = UserDoesNotExistError | ProductDoesNotExistError;
 
 export class ProductReviewCreator {
 	constructor(

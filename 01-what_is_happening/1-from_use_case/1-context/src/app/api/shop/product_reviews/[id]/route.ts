@@ -3,8 +3,13 @@ import * as t from "io-ts";
 import { PathReporter } from "io-ts/PathReporter";
 import { NextRequest } from "next/server";
 
+import { executeWithErrorHandling } from "../../../../../contexts/shared/infrastructure/http/executeWithErrorHandling";
+import { HttpNextResponse } from "../../../../../contexts/shared/infrastructure/http/HttpNextResponse";
 import { PostgresConnection } from "../../../../../contexts/shared/infrastructure/PostgresConnection";
-import { ProductReviewCreator } from "../../../../../contexts/shop/product_reviews/application/create/ProductReviewCreator";
+import {
+	ProductReviewCreator,
+	ProductReviewCreatorErrors,
+} from "../../../../../contexts/shop/product_reviews/application/create/ProductReviewCreator";
 import { PostgresProductReviewRepository } from "../../../../../contexts/shop/product_reviews/infrastructure/PostgresProductReviewRepository";
 import { ProductFinder } from "../../../../../contexts/shop/products/application/find/ProductFinder";
 import { PostgresProductRepository } from "../../../../../contexts/shop/products/infrastructure/PostgresProductRepository";
@@ -25,18 +30,27 @@ export async function PUT(
 	const validatedRequest = CreateProductReviewRequest.decode(await request.json());
 
 	if (isLeft(validatedRequest)) {
-		return new Response(`Invalid request: ${PathReporter.report(validatedRequest).join("\n")}`, {
-			status: 400,
-		});
+		return HttpNextResponse.badRequest(
+			`Invalid request: ${PathReporter.report(validatedRequest).join("\n")}`,
+		);
 	}
 
 	const body = validatedRequest.right;
 
-	await new ProductReviewCreator(
+	const creator = new ProductReviewCreator(
 		new UserFinder(new PostgresUserRepository(new PostgresConnection())),
 		new ProductFinder(new PostgresProductRepository(new PostgresConnection())),
 		new PostgresProductReviewRepository(new PostgresConnection()),
-	).create(id, body.userId, body.productId, body.rating, body.comment);
+	);
 
-	return new Response("", { status: 201 });
+	return executeWithErrorHandling(
+		async () => {
+			await creator.create(id, body.userId, body.productId, body.rating, body.comment);
+
+			return HttpNextResponse.created();
+		},
+		(error: ProductReviewCreatorErrors) => {
+			return HttpNextResponse.domainError(error, 409);
+		},
+	);
 }

@@ -11,6 +11,7 @@ export class PostgresConnection {
 				user: "codely",
 				password: "c0d3ly7v",
 				database: "ecommerce",
+				onnotice: () => {},
 			});
 		}
 
@@ -27,5 +28,21 @@ export class PostgresConnection {
 
 	async execute(query: string): Promise<void> {
 		await this.sql.unsafe(query);
+	}
+
+	async truncateAll(): Promise<void> {
+		await this.execute(`DO
+$$
+DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN (SELECT schemaname, tablename
+              FROM pg_tables
+              WHERE schemaname IN ('shop', 'shared', 'product'))
+    LOOP
+        EXECUTE 'TRUNCATE TABLE ' || quote_ident(r.schemaname) || '.' || quote_ident(r.tablename) || ' CASCADE';
+    END LOOP;
+END
+$$;`);
 	}
 }

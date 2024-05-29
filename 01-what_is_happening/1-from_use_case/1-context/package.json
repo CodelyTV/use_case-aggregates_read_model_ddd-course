@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest",
+    "test": "npm run test:unit && npm run test:acceptance",
+    "test:unit": "jest tests/contexts",
+    "test:acceptance": "playwright test",
     "configure-rabbitmq": "ts-node ./src/app/scripts/configure-rabbitmq.ts",
     "consume-rabbitmq": "ts-node ./src/app/scripts/consume-rabbitmq.ts"
   },
@@ -35,6 +37,7 @@
   "devDependencies": {
     "@codelytv/primitives-type": "1.0.5",
     "@faker-js/faker": "^8.4.1",
+    "@playwright/test": "^1.44.1",
     "@types/amqplib": "^0.10.5",
     "@types/jest": "^29.5.12",
     "@types/uuid": "^9.0.8",

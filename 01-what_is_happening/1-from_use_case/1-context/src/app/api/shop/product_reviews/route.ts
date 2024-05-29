@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { HttpNextResponse } from "../../../../contexts/shared/infrastructure/http/HttpNextResponse";
 import { PostgresConnection } from "../../../../contexts/shared/infrastructure/PostgresConnection";
 import { ProductReviewsByProductSearcher } from "../../../../contexts/shop/product_reviews/application/search_by_product_id/ProductReviewsByProductSearcher";
 import { PostgresProductReviewRepository } from "../../../../contexts/shop/product_reviews/infrastructure/PostgresProductReviewRepository";
@@ -15,10 +16,10 @@ export async function GET(
 	const id = new URL(request.url).searchParams.get("product_id");
 
 	if (!id) {
-		throw new Error("product_id is required");
+		return HttpNextResponse.badRequest("product_id is required");
 	}
 
 	const products = await searcher.search(id);
 
-	return NextResponse.json(products.map((product) => product));
+	return HttpNextResponse.json(products.map((product) => product));
 }
