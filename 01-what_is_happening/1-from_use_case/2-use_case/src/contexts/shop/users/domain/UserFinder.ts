@@ -9,7 +9,7 @@ export class UserFinder {
 	async find(id: string): Promise<User> {
 		const user = await this.repository.search(new UserId(id));
 
-		if (user === null) {
+		if (!user) {
 			throw new UserDoesNotExistError(id);
 		}
 

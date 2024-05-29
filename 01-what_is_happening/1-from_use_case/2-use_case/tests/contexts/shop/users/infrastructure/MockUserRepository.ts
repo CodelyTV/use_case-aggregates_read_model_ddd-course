@@ -6,6 +6,8 @@ export class MockUserRepository implements UserRepository {
 	private readonly mockSave = jest.fn();
 	private readonly mockSearch = jest.fn();
 
+	private readonly searchQueue: Map<string, User[]> = new Map();
+
 	async save(user: User): Promise<void> {
 		expect(this.mockSave).toHaveBeenCalledWith(user.toPrimitives());
 
@@ -14,6 +16,9 @@ export class MockUserRepository implements UserRepository {
 
 	async search(id: UserId): Promise<User | null> {
 		expect(this.mockSearch).toHaveBeenCalledWith(id);
+
+		const user = (this.searchQueue.get(id.value) ?? []).shift() ?? null;
+		this.mockSearch.mockReturnValueOnce(user);
 
 		return this.mockSearch() as Promise<User | null>;
 	}
@@ -24,7 +29,12 @@ export class MockUserRepository implements UserRepository {
 
 	shouldSearch(user: User): void {
 		this.mockSearch(user.id);
-		this.mockSearch.mockReturnValueOnce(user);
+
+		if (!this.searchQueue.has(user.id.value)) {
+			this.searchQueue.set(user.id.value, []);
+		}
+
+		this.searchQueue.get(user.id.value)?.push(user);
 	}
 
 	shouldSearchAndReturnNull(id: UserId): void {

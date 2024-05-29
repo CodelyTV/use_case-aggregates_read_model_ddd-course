@@ -10,6 +10,7 @@ import {
 	ProductReviewCreator,
 	ProductReviewCreatorErrors,
 } from "../../../../../contexts/shop/product_reviews/application/create/ProductReviewCreator";
+import { ProductReviewsByProductSearcher } from "../../../../../contexts/shop/product_reviews/application/search_by_product_id/ProductReviewsByProductSearcher";
 import { PostgresProductReviewRepository } from "../../../../../contexts/shop/product_reviews/infrastructure/PostgresProductReviewRepository";
 import { ProductFinder } from "../../../../../contexts/shop/products/application/find/ProductFinder";
 import { PostgresProductRepository } from "../../../../../contexts/shop/products/infrastructure/PostgresProductRepository";
@@ -37,10 +38,16 @@ export async function PUT(
 
 	const body = validatedRequest.right;
 
+	const postgresConnection = new PostgresConnection();
+	const userFinder = new UserFinder(new PostgresUserRepository(postgresConnection));
 	const creator = new ProductReviewCreator(
-		new UserFinder(new PostgresUserRepository(new PostgresConnection())),
-		new ProductFinder(new PostgresProductRepository(new PostgresConnection())),
-		new PostgresProductReviewRepository(new PostgresConnection()),
+		userFinder,
+		new ProductFinder(
+			new PostgresProductRepository(postgresConnection),
+			new ProductReviewsByProductSearcher(new PostgresProductReviewRepository(postgresConnection)),
+			userFinder,
+		),
+		new PostgresProductReviewRepository(postgresConnection),
 	);
 
 	return executeWithErrorHandling(

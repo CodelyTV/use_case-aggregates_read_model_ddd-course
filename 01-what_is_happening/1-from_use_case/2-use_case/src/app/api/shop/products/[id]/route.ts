@@ -7,11 +7,15 @@ import { Currency } from "../../../../../contexts/shared/domain/Money";
 import { executeWithErrorHandling } from "../../../../../contexts/shared/infrastructure/http/executeWithErrorHandling";
 import { HttpNextResponse } from "../../../../../contexts/shared/infrastructure/http/HttpNextResponse";
 import { PostgresConnection } from "../../../../../contexts/shared/infrastructure/PostgresConnection";
+import { ProductReviewsByProductSearcher } from "../../../../../contexts/shop/product_reviews/application/search_by_product_id/ProductReviewsByProductSearcher";
+import { PostgresProductReviewRepository } from "../../../../../contexts/shop/product_reviews/infrastructure/PostgresProductReviewRepository";
 import { ProductCreator } from "../../../../../contexts/shop/products/application/create/ProductCreator";
 import { ProductFinder } from "../../../../../contexts/shop/products/application/find/ProductFinder";
 import { ProductPrimitives } from "../../../../../contexts/shop/products/domain/Product";
 import { ProductDoesNotExistError } from "../../../../../contexts/shop/products/domain/ProductDoesNotExistError";
 import { PostgresProductRepository } from "../../../../../contexts/shop/products/infrastructure/PostgresProductRepository";
+import { UserFinder } from "../../../../../contexts/shop/users/application/find/UserFinder";
+import { PostgresUserRepository } from "../../../../../contexts/shop/users/infrastructure/PostgresUserRepository";
 
 const CreateProductRequest = t.type({
 	name: t.string,
@@ -52,7 +56,12 @@ export async function GET(
 	_request: Request,
 	{ params: { id } }: { params: { id: string } },
 ): Promise<NextResponse<ProductPrimitives> | Response> {
-	const finder = new ProductFinder(new PostgresProductRepository(new PostgresConnection()));
+	const postgresConnection = new PostgresConnection();
+	const finder = new ProductFinder(
+		new PostgresProductRepository(postgresConnection),
+		new ProductReviewsByProductSearcher(new PostgresProductReviewRepository(postgresConnection)),
+		new UserFinder(new PostgresUserRepository(postgresConnection)),
+	);
 
 	return executeWithErrorHandling(
 		async () => {
