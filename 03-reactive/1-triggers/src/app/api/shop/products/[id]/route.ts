@@ -11,7 +11,7 @@ import { ProductCreator } from "../../../../../contexts/shop/products/applicatio
 import { ProductFinder } from "../../../../../contexts/shop/products/application/find/ProductFinder";
 import { ProductPrimitives } from "../../../../../contexts/shop/products/domain/Product";
 import { ProductDoesNotExistError } from "../../../../../contexts/shop/products/domain/ProductDoesNotExistError";
-import { PostgresWithViewsProductRepository } from "../../../../../contexts/shop/products/infrastructure/PostgresWithViewsProductRepository";
+import { PostgresProductRepository } from "../../../../../contexts/shop/products/infrastructure/PostgresProductRepository";
 
 const CreateProductRequest = t.type({
 	name: t.string,
@@ -36,7 +36,7 @@ export async function PUT(
 
 	const postgresConnection = new PostgresConnection();
 
-	const creator = new ProductCreator(new PostgresWithViewsProductRepository(postgresConnection));
+	const creator = new ProductCreator(new PostgresProductRepository(postgresConnection));
 
 	return executeWithErrorHandling(async () => {
 		await creator.create(
@@ -56,7 +56,7 @@ export async function GET(
 ): Promise<NextResponse<ProductPrimitives> | Response> {
 	const postgresConnection = new PostgresConnection();
 
-	const finder = new ProductFinder(new PostgresWithViewsProductRepository(postgresConnection));
+	const finder = new ProductFinder(new PostgresProductRepository(postgresConnection));
 
 	return executeWithErrorHandling(
 		async () => {
