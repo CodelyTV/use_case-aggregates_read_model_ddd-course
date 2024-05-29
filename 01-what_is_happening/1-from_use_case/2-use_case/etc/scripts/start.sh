@@ -1,0 +1,1 @@
+tmux new-session "docker compose up" \; split-window -h "npm run dev" \; split-window -h "sleep 5 && npm run configure-rabbitmq" \; split-window -v "sleep 5 && npm run consume-rabbitmq" \; select-layout even-vertical
