@@ -10,6 +10,7 @@
     "test": "npm run test:unit && npm run test:acceptance",
     "test:unit": "jest tests/contexts",
     "test:acceptance": "playwright test",
+    "check": "npm run lint && npm run build && npm run test",
     "configure-rabbitmq": "ts-node ./src/app/scripts/configure-rabbitmq.ts",
     "consume-rabbitmq": "ts-node ./src/app/scripts/consume-rabbitmq.ts"
   },
