@@ -24,4 +24,10 @@ export class ProductMother {
 
 		return Product.fromPrimitives(primitives);
 	}
+
+	static multiple(): Product[] {
+		return faker.helpers.multiple(() => ProductMother.create(), {
+			count: { min: 1, max: 5 },
+		});
+	}
 }
