@@ -38,8 +38,8 @@ export class PostgresProductReviewRepository implements ProductReviewRepository 
 			r.rating,
 			r.comment
 		FROM shop.product_reviews r
-		INNER JOIN shop.users u ON r.user_id = u.id
 		WHERE r.product_id = '${productId.value}'
+		ORDER BY r.rating DESC
 	`;
 
 		const result = await this.connection.searchAll<DatabaseProductReview>(query);
@@ -62,11 +62,8 @@ export class PostgresProductReviewRepository implements ProductReviewRepository 
 			r.user_id as userId,
 			r.product_id as productId,
 			r.rating,
-			r.comment,
-			u.name as userName,
-			u.profile_picture as userProfilePicture
+			r.comment
 		FROM shop.product_reviews r
-		INNER JOIN shop.users u ON r.user_id = u.id
 		WHERE r.user_id = '${userId.value}'
 	`;
 

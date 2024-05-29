@@ -7,11 +7,15 @@ import { Currency } from "../../../../../contexts/shared/domain/Money";
 import { executeWithErrorHandling } from "../../../../../contexts/shared/infrastructure/http/executeWithErrorHandling";
 import { HttpNextResponse } from "../../../../../contexts/shared/infrastructure/http/HttpNextResponse";
 import { PostgresConnection } from "../../../../../contexts/shared/infrastructure/PostgresConnection";
+import { ProductReviewsByProductSearcher } from "../../../../../contexts/shop/product_reviews/application/search_by_product_id/ProductReviewsByProductSearcher";
+import { PostgresProductReviewRepository } from "../../../../../contexts/shop/product_reviews/infrastructure/PostgresProductReviewRepository";
 import { ProductCreator } from "../../../../../contexts/shop/products/application/create/ProductCreator";
 import { ProductFinder } from "../../../../../contexts/shop/products/application/find/ProductFinder";
 import { ProductPrimitives } from "../../../../../contexts/shop/products/domain/Product";
 import { ProductDoesNotExistError } from "../../../../../contexts/shop/products/domain/ProductDoesNotExistError";
 import { PostgresProductRepository } from "../../../../../contexts/shop/products/infrastructure/PostgresProductRepository";
+import { UserFinder } from "../../../../../contexts/shop/users/application/find/UserFinder";
+import { PostgresUserRepository } from "../../../../../contexts/shop/users/infrastructure/PostgresUserRepository";
 
 const CreateProductRequest = t.type({
 	name: t.string,
@@ -52,13 +56,36 @@ export async function GET(
 	_request: Request,
 	{ params: { id } }: { params: { id: string } },
 ): Promise<NextResponse<ProductPrimitives> | Response> {
-	const finder = new ProductFinder(new PostgresProductRepository(new PostgresConnection()));
+	const postgresConnection = new PostgresConnection();
+
+	const productFinder = new ProductFinder(new PostgresProductRepository(postgresConnection));
+	const reviewsSearcher = new ProductReviewsByProductSearcher(
+		new PostgresProductReviewRepository(postgresConnection),
+	);
+	const userFinder = new UserFinder(new PostgresUserRepository(postgresConnection));
 
 	return executeWithErrorHandling(
 		async () => {
-			const product = await finder.find(id);
+			const product = await productFinder.find(id);
 
-			return HttpNextResponse.json(product);
+			const reviews = await reviewsSearcher.search(id);
+			const topReviews = reviews.filter((review) => review.rating >= 4).slice(0, 3);
+
+			const reviewsWithUserData = topReviews.map(async (review) => {
+				const user = await userFinder.find(review.userId);
+
+				return {
+					userName: user.name,
+					userProfilePictureUrl: user.profilePicture,
+					reviewRating: review.rating,
+					reviewComment: review.comment,
+				};
+			});
+
+			return HttpNextResponse.json({
+				...product,
+				latestTopReviews: await Promise.all(reviewsWithUserData),
+			});
 		},
 		(error: ProductDoesNotExistError) => {
 			return HttpNextResponse.domainError(error, 404);
