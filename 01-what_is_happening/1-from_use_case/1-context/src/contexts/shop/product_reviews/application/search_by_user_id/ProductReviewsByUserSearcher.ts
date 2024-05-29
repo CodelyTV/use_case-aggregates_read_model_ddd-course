@@ -1,14 +1,14 @@
 import { Primitives } from "@codelytv/primitives-type";
 
-import { ProductId } from "../../../products/domain/ProductId";
+import { UserId } from "../../../users/domain/UserId";
 import { ProductReview } from "../../domain/ProductReview";
 import { ProductReviewRepository } from "../../domain/ProductReviewRepository";
 
-export class ProductReviewsByProductSearcher {
+export class ProductReviewsByUserSearcher {
 	constructor(private readonly repository: ProductReviewRepository) {}
 
-	async search(productId: string): Promise<Primitives<ProductReview>[]> {
-		return (await this.repository.searchByProduct(new ProductId(productId))).map((review) =>
+	async search(userId: string): Promise<Primitives<ProductReview>[]> {
+		return (await this.repository.searchByUser(new UserId(userId))).map((review) =>
 			review.toPrimitives(),
 		);
 	}

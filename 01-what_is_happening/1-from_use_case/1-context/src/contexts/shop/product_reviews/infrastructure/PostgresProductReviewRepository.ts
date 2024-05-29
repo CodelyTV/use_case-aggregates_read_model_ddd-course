@@ -1,5 +1,6 @@
 import { PostgresConnection } from "../../../shared/infrastructure/PostgresConnection";
 import { ProductId } from "../../products/domain/ProductId";
+import { UserId } from "../../users/domain/UserId";
 import { ProductReview } from "../domain/ProductReview";
 import { ProductReviewRepository } from "../domain/ProductReviewRepository";
 
@@ -43,6 +44,37 @@ export class PostgresProductReviewRepository implements ProductReviewRepository 
 		FROM shop.product_reviews r
 		INNER JOIN shop.users u ON r.user_id = u.id
 		WHERE r.product_id = '${productId.value}'
+	`;
+
+		const result = await this.connection.searchAll<DatabaseProductReview>(query);
+
+		return result.map(
+			(productReview) =>
+				new ProductReview(
+					productReview.id,
+					productReview.userId,
+					productReview.productId,
+					productReview.rating,
+					productReview.comment,
+					productReview.userName,
+					productReview.userProfilePicture,
+				),
+		);
+	}
+
+	async searchByUser(userId: UserId): Promise<ProductReview[]> {
+		const query = `
+		SELECT
+			r.id,
+			r.user_id as userId,
+			r.product_id as productId,
+			r.rating,
+			r.comment,
+			u.name as userName,
+			u.profile_picture as userProfilePicture
+		FROM shop.product_reviews r
+		INNER JOIN shop.users u ON r.user_id = u.id
+		WHERE r.user_id = '${userId.value}'
 	`;
 
 		const result = await this.connection.searchAll<DatabaseProductReview>(query);

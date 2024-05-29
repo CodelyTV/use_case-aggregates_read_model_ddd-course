@@ -1,3 +1,5 @@
+import { Primitives } from "@codelytv/primitives-type";
+
 import { ProductId } from "../../products/domain/ProductId";
 import { UserId } from "../../users/domain/UserId";
 import { UserName } from "../../users/domain/UserName";
@@ -5,16 +7,6 @@ import { UserProfilePicture } from "../../users/domain/UserProfilePicture";
 import { ProductReviewComment } from "./ProductReviewComment";
 import { ProductReviewId } from "./ProductReviewId";
 import { ProductReviewRating } from "./ProductReviewRating";
-
-export type ProductReviewPrimitives = {
-	id: string;
-	userId: string;
-	productId: string;
-	rating: number;
-	comment: string;
-	userName: string;
-	userProfilePicture: string;
-};
 
 export class ProductReview {
 	public readonly id: ProductReviewId;
@@ -55,7 +47,19 @@ export class ProductReview {
 		return new ProductReview(id, userId, productId, rating, comment, userName, userProfilePicture);
 	}
 
-	toPrimitives(): ProductReviewPrimitives {
+	static fromPrimitives(primitives: Primitives<ProductReview>): ProductReview {
+		return new ProductReview(
+			primitives.id,
+			primitives.userId,
+			primitives.productId,
+			primitives.rating,
+			primitives.comment,
+			primitives.userName,
+			primitives.userProfilePicture,
+		);
+	}
+
+	toPrimitives(): Primitives<ProductReview> {
 		return {
 			id: this.id.value,
 			userId: this.userId.value,
