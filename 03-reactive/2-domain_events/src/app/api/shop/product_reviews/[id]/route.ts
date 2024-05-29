@@ -3,6 +3,9 @@ import * as t from "io-ts";
 import { PathReporter } from "io-ts/PathReporter";
 import { NextRequest } from "next/server";
 
+import { DomainEventFailover } from "../../../../../contexts/shared/infrastructure/event_bus/failover/DomainEventFailover";
+import { RabbitMqConnection } from "../../../../../contexts/shared/infrastructure/event_bus/rabbitmq/RabbitMqConnection";
+import { RabbitMqEventBus } from "../../../../../contexts/shared/infrastructure/event_bus/rabbitmq/RabbitMqEventBus";
 import { executeWithErrorHandling } from "../../../../../contexts/shared/infrastructure/http/executeWithErrorHandling";
 import { HttpNextResponse } from "../../../../../contexts/shared/infrastructure/http/HttpNextResponse";
 import { PostgresConnection } from "../../../../../contexts/shared/infrastructure/PostgresConnection";
@@ -46,6 +49,7 @@ export async function PUT(
 		new UserFinder(userRepository),
 		new ProductFinder(new PostgresProductRepository(postgresConnection)),
 		reviewRepository,
+		new RabbitMqEventBus(new RabbitMqConnection(), new DomainEventFailover(postgresConnection)),
 	);
 
 	return executeWithErrorHandling(

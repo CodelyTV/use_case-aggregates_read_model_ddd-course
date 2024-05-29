@@ -14,6 +14,8 @@ export class RabbitMqEventBus implements EventBus {
 	) {}
 
 	async publish(events: DomainEvent[]): Promise<void> {
+		console.log("Publishing domain events", events);
+
 		await this.connection.connect();
 
 		const promises = events.map(async (event) => {

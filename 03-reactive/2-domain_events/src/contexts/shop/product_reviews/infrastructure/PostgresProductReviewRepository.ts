@@ -1,3 +1,5 @@
+import { Service } from "diod";
+
 import { PostgresConnection } from "../../../shared/infrastructure/PostgresConnection";
 import { ProductId } from "../../products/domain/ProductId";
 import { UserId } from "../../users/domain/UserId";
@@ -12,6 +14,7 @@ type DatabaseProductReview = {
 	comment: string;
 };
 
+@Service()
 export class PostgresProductReviewRepository implements ProductReviewRepository {
 	constructor(private readonly connection: PostgresConnection) {}
 

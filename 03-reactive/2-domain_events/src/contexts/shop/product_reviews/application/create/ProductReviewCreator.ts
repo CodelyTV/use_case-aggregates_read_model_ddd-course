@@ -1,3 +1,5 @@
+import { Service } from "diod";
+
 import { EventBus } from "../../../../shared/domain/event/EventBus";
 import { ProductFinder } from "../../../products/application/find/ProductFinder";
 import { ProductDoesNotExistError } from "../../../products/domain/ProductDoesNotExistError";
@@ -8,6 +10,7 @@ import { ProductReviewRepository } from "../../domain/ProductReviewRepository";
 
 export type ProductReviewCreatorErrors = UserDoesNotExistError | ProductDoesNotExistError;
 
+@Service()
 export class ProductReviewCreator {
 	constructor(
 		private readonly userFinder: UserFinder,

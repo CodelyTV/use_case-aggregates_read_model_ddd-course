@@ -37,9 +37,12 @@ test.describe("Get product", () => {
 
 		await givenThereIsAProduct(product);
 
-		await givenThereIsAProductReview(review1);
-		await givenThereIsAProductReview(review2);
-		await givenThereIsAProductReview(reviewWithLowRating);
+		await givenThereIsAProductReview(request, review1);
+		await givenThereIsAProductReview(request, review2);
+		await givenThereIsAProductReview(request, reviewWithLowRating);
+
+		// Not needed because rabbit is faster than the following http call
+		// await new Promise((resolve) => setTimeout(resolve, 1000));
 
 		await PlaywrightRequest(request).getExpecting(`/api/shop/products/${primitives.id}`, 200, {
 			id: primitives.id,
@@ -51,16 +54,16 @@ test.describe("Get product", () => {
 			imageUrls: primitives.imageUrls,
 			latestTopReviews: [
 				{
-					userName: user1.name.value,
-					userProfilePictureUrl: user1.profilePicture.value,
-					reviewRating: review1.rating.value,
-					reviewComment: review1.comment.value,
-				},
-				{
 					userName: user2.name.value,
 					userProfilePictureUrl: user2.profilePicture.value,
 					reviewRating: review2.rating.value,
 					reviewComment: review2.comment.value,
+				},
+				{
+					userName: user1.name.value,
+					userProfilePictureUrl: user1.profilePicture.value,
+					reviewRating: review1.rating.value,
+					reviewComment: review1.comment.value,
 				},
 			],
 		});

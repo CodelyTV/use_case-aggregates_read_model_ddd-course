@@ -1,3 +1,5 @@
+import { Service } from "diod";
+
 import { PostgresConnection } from "../../../shared/infrastructure/PostgresConnection";
 import { Product } from "../domain/Product";
 import { ProductId } from "../domain/ProductId";
@@ -17,12 +19,15 @@ type DatabaseProduct = {
 	}[];
 };
 
+@Service()
 export class PostgresProductRepository implements ProductRepository {
 	constructor(private readonly connection: PostgresConnection) {}
 
 	async save(product: Product): Promise<void> {
+		const productPrimitives = product.toPrimitives();
+
 		await this.connection.execute(`
-			INSERT INTO shop.products (id, name, price_amount, price_currency, image_urls)
+			INSERT INTO shop.products (id, name, price_amount, price_currency, image_urls, latest_top_reviews)
 			VALUES (
 				'${product.id.value}',
 				'${product.name.value}',
@@ -31,8 +36,16 @@ export class PostgresProductRepository implements ProductRepository {
 				'{${product.imageUrls
 					.toPrimitives()
 					.map((url: string) => `"${url}"`)
-					.join(",")}}'
+					.join(",")}}',
+				'${JSON.stringify(productPrimitives.latestTopReviews)}'
 		   )
+		   ON CONFLICT (id) DO UPDATE 
+		   SET 
+				name = EXCLUDED.name,
+				price_amount = EXCLUDED.price_amount,
+				price_currency = EXCLUDED.price_currency,
+				image_urls = EXCLUDED.image_urls,
+				latest_top_reviews = EXCLUDED.latest_top_reviews;
 		`);
 	}
 
@@ -59,7 +72,7 @@ WHERE id = '${id.value}';
 				currency: product.price_currency,
 			},
 			imageUrls: product.image_urls,
-			latestTopReviews: product.latest_top_reviews,
+			latestTopReviews: product.latest_top_reviews ?? [],
 		});
 	}
 
@@ -80,7 +93,7 @@ FROM shop.products;
 					currency: product.price_currency,
 				},
 				imageUrls: product.image_urls,
-				latestTopReviews: product.latest_top_reviews,
+				latestTopReviews: product.latest_top_reviews ?? [],
 			}),
 		);
 	}

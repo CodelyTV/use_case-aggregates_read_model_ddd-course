@@ -1,10 +1,10 @@
 import { Product } from "./Product";
 import { ProductId } from "./ProductId";
 
-export interface ProductRepository {
-	search(id: ProductId): Promise<Product | null>;
+export abstract class ProductRepository {
+	abstract search(id: ProductId): Promise<Product | null>;
 
-	searchAll(): Promise<Product[]>;
+	abstract searchAll(): Promise<Product[]>;
 
-	save(product: Product): Promise<void>;
+	abstract save(product: Product): Promise<void>;
 }

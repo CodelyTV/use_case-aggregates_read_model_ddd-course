@@ -1,3 +1,5 @@
+import { Service } from "diod";
+
 import { PostgresConnection } from "../../../shared/infrastructure/PostgresConnection";
 import { User } from "../domain/User";
 import { UserId } from "../domain/UserId";
@@ -10,6 +12,7 @@ type DatabaseUser = {
 	profile_picture: string;
 };
 
+@Service()
 export class PostgresUserRepository implements UserRepository {
 	constructor(private readonly connection: PostgresConnection) {}
 

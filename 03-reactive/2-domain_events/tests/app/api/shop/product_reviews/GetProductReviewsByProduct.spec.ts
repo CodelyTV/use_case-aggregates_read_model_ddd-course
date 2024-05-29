@@ -36,9 +36,9 @@ test.describe("Get product reviews by product", () => {
 		await givenThereIsAProduct(product);
 		await givenThereIsAProduct(anotherProduct);
 
-		await givenThereIsAProductReview(review1);
-		await givenThereIsAProductReview(review2);
-		await givenThereIsAProductReview(reviewForAnotherProduct);
+		await givenThereIsAProductReview(request, review1);
+		await givenThereIsAProductReview(request, review2);
+		await givenThereIsAProductReview(request, reviewForAnotherProduct);
 
 		const response = await PlaywrightRequest(request).get(
 			`/api/shop/product_reviews?product_id=${product.id.value}`,

@@ -59,7 +59,7 @@ WHERE id = '${id.value}';
 				currency: product.price_currency,
 			},
 			imageUrls: product.image_urls,
-			latestTopReviews: product.latest_top_reviews,
+			latestTopReviews: product.latest_top_reviews ?? [],
 		});
 	}
 
@@ -80,7 +80,7 @@ FROM shop.products;
 					currency: product.price_currency,
 				},
 				imageUrls: product.image_urls,
-				latestTopReviews: product.latest_top_reviews,
+				latestTopReviews: product.latest_top_reviews ?? [],
 			}),
 		);
 	}

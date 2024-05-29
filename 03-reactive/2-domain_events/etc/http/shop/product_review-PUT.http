@@ -2,8 +2,8 @@ PUT http://localhost:3000/api/shop/product_reviews/{{$random.uuid}}
 Content-Type: application/json
 
 {
-  "userId": "8b5e9316-acc2-4e85-a335-a671880077b1",
-  "productId": "8d5f5b10-6f34-4421-a9ee-7a3a0e5a5be8",
+  "userId": "3dbea6b3-ba54-4ddd-ae5a-382231eb18a3",
+  "productId": "85cbb294-bb7f-4ec9-9f97-87d08a73a59f",
   "rating": 4,
   "comment": "Funciona bien"
 }

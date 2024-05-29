@@ -16,12 +16,14 @@ export type ProductPrimitives = {
 };
 
 export class Product {
+	private readonly maxTopReviews = 3;
+
 	constructor(
 		public readonly id: ProductId,
 		public readonly name: ProductName,
 		public readonly price: Money,
 		public readonly imageUrls: ProductImageUrls,
-		public readonly latestTopReviews: ProductTopReview[],
+		public latestTopReviews: ProductTopReview[],
 	) {}
 
 	static create(id: string, name: string, price: Money, imageUrls: string[]): Product {
@@ -52,5 +54,11 @@ export class Product {
 			imageUrls: this.imageUrls.toPrimitives(),
 			latestTopReviews: this.latestTopReviews.map((review) => review.toPrimitives()),
 		};
+	}
+
+	addLatestTopReviews(name: string, profilePicture: string, rating: number, comment: string): void {
+		const review = new ProductTopReview(name, profilePicture, rating, comment);
+
+		this.latestTopReviews = [review, ...this.latestTopReviews].slice(0, this.maxTopReviews);
 	}
 }
