@@ -49,33 +49,3 @@ FROM shop.products p
 	LEFT JOIN shop.product_reviews r ON p.id = r.product_id
 	LEFT JOIN shop.users u ON r.user_id = u.id
 GROUP BY p.id;
-
-
------------------------------------------
--- TRIGGERS
------------------------------------------
-CREATE OR REPLACE FUNCTION update_latest_top_reviews_on_review_inserted() RETURNS TRIGGER AS $$
-BEGIN
-	UPDATE shop.products p
-	SET latest_top_reviews = (
-		SELECT json_agg(
-		   json_build_object(
-				'userName', u.name,
-				'userProfilePictureUrl', u.profile_picture,
-				'reviewRating', r.rating,
-				'reviewComment', r.comment
-		   ) ORDER BY r.rating DESC
-		)
-		FROM shop.product_reviews r JOIN shop.users u ON r.user_id = u.id
-		WHERE r.product_id = p.id AND r.rating >= 4
-	)
-	WHERE p.id = NEW.product_id;
-
-	RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER set_latest_top_reviews_TRIGGER
-	AFTER INSERT OR UPDATE ON shop.product_reviews
-	FOR EACH ROW
-EXECUTE FUNCTION update_latest_top_reviews_on_review_inserted();

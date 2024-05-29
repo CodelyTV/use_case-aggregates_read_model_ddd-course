@@ -1,3 +1,4 @@
+import { EventBus } from "../../../../shared/domain/event/EventBus";
 import { ProductFinder } from "../../../products/application/find/ProductFinder";
 import { ProductDoesNotExistError } from "../../../products/domain/ProductDoesNotExistError";
 import { UserFinder } from "../../../users/application/find/UserFinder";
@@ -12,6 +13,7 @@ export class ProductReviewCreator {
 		private readonly userFinder: UserFinder,
 		private readonly productFinder: ProductFinder,
 		private readonly repository: ProductReviewRepository,
+		private readonly eventBus: EventBus,
 	) {}
 
 	async create(
@@ -24,9 +26,10 @@ export class ProductReviewCreator {
 		await this.ensureUserExists(userId);
 		await this.ensureProductExists(productId);
 
-		const product = ProductReview.create(id, userId, productId, rating, comment);
+		const review = ProductReview.create(id, userId, productId, rating, comment);
 
-		await this.repository.save(product);
+		await this.repository.save(review);
+		await this.eventBus.publish(review.pullDomainEvents());
 	}
 
 	private async ensureUserExists(userId: string): Promise<void> {
