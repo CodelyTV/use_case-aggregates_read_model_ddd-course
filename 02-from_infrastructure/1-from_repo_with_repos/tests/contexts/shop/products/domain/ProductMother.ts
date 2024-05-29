@@ -19,6 +19,7 @@ export class ProductMother {
 			imageUrls: faker.helpers.multiple(() => faker.image.url(), {
 				count: { min: 1, max: 5 },
 			}),
+			latestTopReviews: [],
 			...params,
 		};
 

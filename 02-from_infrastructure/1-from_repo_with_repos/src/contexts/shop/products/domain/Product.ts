@@ -2,6 +2,7 @@ import { Money } from "../../../shared/domain/Money";
 import { ProductId } from "./ProductId";
 import { ProductImageUrls } from "./ProductImageUrls";
 import { ProductName } from "./ProductName";
+import { ProductTopReview, ProductTopReviewPrimitives } from "./ProductTopReview";
 
 export type ProductPrimitives = {
 	id: string;
@@ -11,38 +12,45 @@ export type ProductPrimitives = {
 		currency: "EUR" | "USD";
 	};
 	imageUrls: string[];
+	latestTopReviews: ProductTopReviewPrimitives[];
 };
 
 export class Product {
-	public readonly id: ProductId;
-	public readonly name: ProductName;
-	public readonly price: Money;
-	public readonly imageUrls: ProductImageUrls;
-
-	constructor(id: string, name: string, price: Money, imageUrls: string[]) {
-		this.id = new ProductId(id);
-		this.name = new ProductName(name);
-		this.price = price;
-		this.imageUrls = ProductImageUrls.fromPrimitives(imageUrls);
-	}
+	constructor(
+		public readonly id: ProductId,
+		public readonly name: ProductName,
+		public readonly price: Money,
+		public readonly imageUrls: ProductImageUrls,
+		public readonly latestTopReviews: ProductTopReview[],
+	) {}
 
 	static create(id: string, name: string, price: Money, imageUrls: string[]): Product {
-		return new Product(id, name, price, imageUrls);
+		return Product.fromPrimitives({
+			id,
+			name,
+			price,
+			imageUrls,
+			latestTopReviews: [],
+		});
 	}
 
 	static fromPrimitives(primitives: ProductPrimitives): Product {
-		return new Product(primitives.id, primitives.name, primitives.price, primitives.imageUrls);
+		return new Product(
+			new ProductId(primitives.id),
+			new ProductName(primitives.name),
+			primitives.price,
+			ProductImageUrls.fromPrimitives(primitives.imageUrls),
+			primitives.latestTopReviews.map((review) => ProductTopReview.fromPrimitives(review)),
+		);
 	}
 
 	toPrimitives(): ProductPrimitives {
 		return {
 			id: this.id.value,
 			name: this.name.value,
-			price: {
-				amount: this.price.amount,
-				currency: this.price.currency,
-			},
+			price: this.price,
 			imageUrls: this.imageUrls.toPrimitives(),
+			latestTopReviews: this.latestTopReviews.map((review) => review.toPrimitives()),
 		};
 	}
 }

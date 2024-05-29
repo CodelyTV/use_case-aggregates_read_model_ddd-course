@@ -12,7 +12,7 @@ import {
 } from "../../../../../contexts/shop/product_reviews/application/create/ProductReviewCreator";
 import { PostgresProductReviewRepository } from "../../../../../contexts/shop/product_reviews/infrastructure/PostgresProductReviewRepository";
 import { ProductFinder } from "../../../../../contexts/shop/products/application/find/ProductFinder";
-import { PostgresProductRepository } from "../../../../../contexts/shop/products/infrastructure/PostgresProductRepository";
+import { PostgresWithOtherRepositoriesProductRepository } from "../../../../../contexts/shop/products/infrastructure/PostgresWithOtherRepositoriesProductRepository";
 import { UserFinder } from "../../../../../contexts/shop/users/application/find/UserFinder";
 import { PostgresUserRepository } from "../../../../../contexts/shop/users/infrastructure/PostgresUserRepository";
 
@@ -37,10 +37,21 @@ export async function PUT(
 
 	const body = validatedRequest.right;
 
+	const postgresConnection = new PostgresConnection();
+
+	const userRepository = new PostgresUserRepository(postgresConnection);
+	const reviewRepository = new PostgresProductReviewRepository(postgresConnection);
+
 	const creator = new ProductReviewCreator(
-		new UserFinder(new PostgresUserRepository(new PostgresConnection())),
-		new ProductFinder(new PostgresProductRepository(new PostgresConnection())),
-		new PostgresProductReviewRepository(new PostgresConnection()),
+		new UserFinder(userRepository),
+		new ProductFinder(
+			new PostgresWithOtherRepositoriesProductRepository(
+				postgresConnection,
+				reviewRepository,
+				userRepository,
+			),
+		),
+		reviewRepository,
 	);
 
 	return executeWithErrorHandling(
