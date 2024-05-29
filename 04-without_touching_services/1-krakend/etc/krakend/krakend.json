@@ -19,8 +19,21 @@
 					],
 					"url_pattern": "/api/shop/product_reviews?product_id={id}",
 					"is_collection": true,
-					"mapping": {
-						"collection": "latestTopReviews"
+					"extra_config": {
+						"proxy": {
+							"flatmap_filter": [
+								{ "type": "del", "args": ["collection.*.productId"] },
+								{ "type": "del", "args": ["collection.*.id"] },
+								{
+									"type": "move",
+									"args": ["collection", "latestTopReviews"]
+								}
+							]
+						},
+						"modifier/jmespath": {
+							"@comment": "Only works on enterprise edition",
+							"expr": "latestTopReviews[?rating >= `4` ]"
+						}
 					}
 				}
 			]

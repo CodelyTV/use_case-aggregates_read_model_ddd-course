@@ -12,16 +12,6 @@ services:
       - db_data:/var/lib/postgresql/data
       - ./databases:/docker-entrypoint-initdb.d
 
-  4_1_add_field-rabbitmq:
-    image: 'rabbitmq:3.12-management'
-    restart: unless-stopped
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      - RABBITMQ_DEFAULT_USER=codely
-      - RABBITMQ_DEFAULT_PASS=codely
-
   krakend:
     image: devopsfaith/krakend:latest
     ports:
