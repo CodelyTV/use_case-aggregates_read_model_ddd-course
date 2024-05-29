@@ -1,0 +1,27 @@
+services:
+  1_2_add_field-postgres:
+    image: postgres:latest
+    restart: always
+
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: codely
+      POSTGRES_PASSWORD: c0d3ly7v
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./databases:/docker-entrypoint-initdb.d
+
+  1_2_add_field-rabbitmq:
+    image: 'rabbitmq:3.12-management'
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=codely
+      - RABBITMQ_DEFAULT_PASS=codely
+
+volumes:
+  db_data:
