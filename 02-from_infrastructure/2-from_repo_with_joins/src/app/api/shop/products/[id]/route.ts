@@ -7,13 +7,11 @@ import { Currency } from "../../../../../contexts/shared/domain/Money";
 import { executeWithErrorHandling } from "../../../../../contexts/shared/infrastructure/http/executeWithErrorHandling";
 import { HttpNextResponse } from "../../../../../contexts/shared/infrastructure/http/HttpNextResponse";
 import { PostgresConnection } from "../../../../../contexts/shared/infrastructure/PostgresConnection";
-import { PostgresProductReviewRepository } from "../../../../../contexts/shop/product_reviews/infrastructure/PostgresProductReviewRepository";
 import { ProductCreator } from "../../../../../contexts/shop/products/application/create/ProductCreator";
 import { ProductFinder } from "../../../../../contexts/shop/products/application/find/ProductFinder";
 import { ProductPrimitives } from "../../../../../contexts/shop/products/domain/Product";
 import { ProductDoesNotExistError } from "../../../../../contexts/shop/products/domain/ProductDoesNotExistError";
-import { PostgresWithOtherRepositoriesProductRepository } from "../../../../../contexts/shop/products/infrastructure/PostgresWithOtherRepositoriesProductRepository";
-import { PostgresUserRepository } from "../../../../../contexts/shop/users/infrastructure/PostgresUserRepository";
+import { PostgresWithJoinsProductRepository } from "../../../../../contexts/shop/products/infrastructure/PostgresWithJoinsProductRepository";
 
 const CreateProductRequest = t.type({
 	name: t.string,
@@ -38,16 +36,7 @@ export async function PUT(
 
 	const postgresConnection = new PostgresConnection();
 
-	const userRepository = new PostgresUserRepository(postgresConnection);
-	const reviewRepository = new PostgresProductReviewRepository(postgresConnection);
-
-	const creator = new ProductCreator(
-		new PostgresWithOtherRepositoriesProductRepository(
-			postgresConnection,
-			reviewRepository,
-			userRepository,
-		),
-	);
+	const creator = new ProductCreator(new PostgresWithJoinsProductRepository(postgresConnection));
 
 	return executeWithErrorHandling(async () => {
 		await creator.create(
@@ -67,16 +56,7 @@ export async function GET(
 ): Promise<NextResponse<ProductPrimitives> | Response> {
 	const postgresConnection = new PostgresConnection();
 
-	const userRepository = new PostgresUserRepository(postgresConnection);
-	const reviewRepository = new PostgresProductReviewRepository(postgresConnection);
-
-	const finder = new ProductFinder(
-		new PostgresWithOtherRepositoriesProductRepository(
-			postgresConnection,
-			reviewRepository,
-			userRepository,
-		),
-	);
+	const finder = new ProductFinder(new PostgresWithJoinsProductRepository(postgresConnection));
 
 	return executeWithErrorHandling(
 		async () => {

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 import { DomainError } from "../../domain/DomainError";
-import { HttpNextResponse } from "./HttpNextResponse";
 
 export async function executeWithErrorHandling<T extends DomainError>(
 	fn: () => Promise<NextResponse>,
@@ -18,6 +17,6 @@ export async function executeWithErrorHandling<T extends DomainError>(
 			}
 		}
 
-		return HttpNextResponse.internalServerError();
+		throw error;
 	}
 }

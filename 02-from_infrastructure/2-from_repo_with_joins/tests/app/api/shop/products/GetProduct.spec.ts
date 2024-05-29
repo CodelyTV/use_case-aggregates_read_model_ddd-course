@@ -26,6 +26,11 @@ test.describe("Get product", () => {
 			productId: product.id.value,
 			rating: 4.5,
 		});
+		const reviewWithLowRating = ProductReviewMother.create({
+			userId: user2.id.value,
+			productId: product.id.value,
+			rating: 3,
+		});
 
 		await givenThereIsAUser(user1);
 		await givenThereIsAUser(user2);
@@ -34,6 +39,7 @@ test.describe("Get product", () => {
 
 		await givenThereIsAProductReview(review1);
 		await givenThereIsAProductReview(review2);
+		await givenThereIsAProductReview(reviewWithLowRating);
 
 		await PlaywrightRequest(request).getExpecting(`/api/shop/products/${primitives.id}`, 200, {
 			id: primitives.id,
