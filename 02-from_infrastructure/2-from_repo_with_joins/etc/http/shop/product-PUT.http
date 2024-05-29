@@ -1,0 +1,9 @@
+PUT http://localhost:3000/api/shop/products/{{$random.uuid}}
+Content-Type: application/json
+
+{
+  "name": "Good product",
+  "price_amount": 12.5,
+  "price_currency": "EUR",
+  "image_urls": ["https://example.com/image.jpg", "https://example.com/image2.jpg"]
+}
