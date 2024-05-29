@@ -2,7 +2,7 @@ import { PlaywrightRequest } from "../../../../contexts/shared/infrastructure/pl
 import { expect, test } from "../../../../contexts/shared/infrastructure/playwright/PlaywrightTest";
 import { UserMother } from "../../../../contexts/shop/users/domain/UserMother";
 
-test.describe("Register user", () => {
+test.describe("Put user", () => {
 	test("register a valid user", async ({ request }) => {
 		const user = UserMother.create().toPrimitives();
 

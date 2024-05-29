@@ -54,9 +54,9 @@ export async function GET(
 
 	return executeWithErrorHandling(
 		async () => {
-			const product = finder.find(id);
+			const user = await finder.find(id);
 
-			return HttpNextResponse.json(product);
+			return HttpNextResponse.json(user);
 		},
 		(error: UserDoesNotExistError) => {
 			return HttpNextResponse.domainError(error, 404);
