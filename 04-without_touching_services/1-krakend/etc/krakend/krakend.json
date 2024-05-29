@@ -1,17 +1,29 @@
 {
-  "version": 3,
-  "name": "ecommerce-gateway",
-  "port": 8080,
-  "endpoints": [
-    {
-      "endpoint": "/shop/products/{product_id}",
-      "method": "GET",
-      "backend": [
-        {
-          "host": ["http://host.docker.internal:3000"],
-          "url_pattern": "/api/shop/products/{product_id}"
-        }
-      ]
-    }
-  ]
+	"version": 3,
+	"name": "ecommerce-gateway",
+	"port": 8080,
+	"endpoints": [
+		{
+			"endpoint": "/shop/products/{id}",
+			"method": "GET",
+			"backend": [
+				{
+					"host": [
+						"http://host.docker.internal:3000"
+					],
+					"url_pattern": "/api/shop/products/{id}"
+				},
+				{
+					"host": [
+						"http://host.docker.internal:3000"
+					],
+					"url_pattern": "/api/shop/product_reviews?product_id={id}",
+					"is_collection": true,
+					"mapping": {
+						"collection": "latestTopReviews"
+					}
+				}
+			]
+		}
+	]
 }

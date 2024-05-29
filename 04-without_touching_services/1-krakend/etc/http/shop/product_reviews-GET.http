@@ -1,1 +1,1 @@
-GET http://localhost:3000/api/shop/product_reviews?product_id=1f2a73e3-e0e9-4418-8a53-d080871b24b3
+GET http://localhost:3000/api/shop/product_reviews?product_id=8d5f5b10-6f34-4421-a9ee-7a3a0e5a5be8
