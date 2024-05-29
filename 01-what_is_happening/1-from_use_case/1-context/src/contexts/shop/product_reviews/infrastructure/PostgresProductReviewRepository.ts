@@ -6,12 +6,10 @@ import { ProductReviewRepository } from "../domain/ProductReviewRepository";
 
 type DatabaseProductReview = {
 	id: string;
-	userId: string;
-	productId: string;
+	user_id: string;
+	product_id: string;
 	rating: number;
 	comment: string;
-	userName: string;
-	userProfilePicture: string;
 };
 
 export class PostgresProductReviewRepository implements ProductReviewRepository {
@@ -35,12 +33,10 @@ export class PostgresProductReviewRepository implements ProductReviewRepository 
 		const query = `
 		SELECT
 			r.id,
-			r.user_id as userId,
-			r.product_id as productId,
+			r.user_id ,
+			r.product_id ,
 			r.rating,
-			r.comment,
-			u.name as userName,
-			u.profile_picture as userProfilePicture
+			r.comment
 		FROM shop.product_reviews r
 		INNER JOIN shop.users u ON r.user_id = u.id
 		WHERE r.product_id = '${productId.value}'
@@ -48,17 +44,14 @@ export class PostgresProductReviewRepository implements ProductReviewRepository 
 
 		const result = await this.connection.searchAll<DatabaseProductReview>(query);
 
-		return result.map(
-			(productReview) =>
-				new ProductReview(
-					productReview.id,
-					productReview.userId,
-					productReview.productId,
-					productReview.rating,
-					productReview.comment,
-					productReview.userName,
-					productReview.userProfilePicture,
-				),
+		return result.map((productReview) =>
+			ProductReview.fromPrimitives({
+				id: productReview.id,
+				userId: productReview.user_id,
+				productId: productReview.product_id,
+				rating: productReview.rating,
+				comment: productReview.comment,
+			}),
 		);
 	}
 
@@ -79,17 +72,14 @@ export class PostgresProductReviewRepository implements ProductReviewRepository 
 
 		const result = await this.connection.searchAll<DatabaseProductReview>(query);
 
-		return result.map(
-			(productReview) =>
-				new ProductReview(
-					productReview.id,
-					productReview.userId,
-					productReview.productId,
-					productReview.rating,
-					productReview.comment,
-					productReview.userName,
-					productReview.userProfilePicture,
-				),
+		return result.map((productReview) =>
+			ProductReview.fromPrimitives({
+				id: productReview.id,
+				userId: productReview.user_id,
+				productId: productReview.product_id,
+				rating: productReview.rating,
+				comment: productReview.comment,
+			}),
 		);
 	}
 }

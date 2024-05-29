@@ -10,5 +10,5 @@ export async function GET(): Promise<NextResponse<ProductPrimitives[]> | Respons
 
 	const products = await searcher.search();
 
-	return NextResponse.json(products.map((product) => product.toPrimitives()));
+	return NextResponse.json(products);
 }

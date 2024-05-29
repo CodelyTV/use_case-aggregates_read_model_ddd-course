@@ -8,7 +8,6 @@ type DatabaseUser = {
 	name: string;
 	email: string;
 	profile_picture: string;
-	status: string;
 };
 
 export class PostgresUserRepository implements UserRepository {
@@ -18,13 +17,12 @@ export class PostgresUserRepository implements UserRepository {
 		const userPrimitives = user.toPrimitives();
 
 		const query = `
-			INSERT INTO shop.users (id, name, email, profile_picture, status)
+			INSERT INTO shop.users (id, name, email, profile_picture)
 			VALUES (
 				'${userPrimitives.id}',
 				'${userPrimitives.name}',
 				'${userPrimitives.email}',
-				'${userPrimitives.profilePicture}',
-				'${userPrimitives.status.valueOf()}'
+				'${userPrimitives.profilePicture}'
 			);`;
 
 		await this.connection.execute(query);
@@ -44,7 +42,6 @@ export class PostgresUserRepository implements UserRepository {
 			name: result.name,
 			email: result.email,
 			profilePicture: result.profile_picture,
-			status: result.status,
 		});
 	}
 }

@@ -1,6 +1,5 @@
 import { PostgresConnection } from "../../../shared/infrastructure/PostgresConnection";
 import { Product } from "../domain/Product";
-import { ProductFeaturedReviewPrimitives } from "../domain/ProductFeaturedReview";
 import { ProductId } from "../domain/ProductId";
 import { ProductRepository } from "../domain/ProductRepository";
 
@@ -9,9 +8,7 @@ type DatabaseProduct = {
 	name: string;
 	amount: number;
 	currency: "EUR" | "USD";
-	imageUrls: string;
-	featuredReview: string | null;
-	rating: number | null;
+	image_urls: string[];
 };
 
 export class PostgresProductRepository implements ProductRepository {
@@ -24,9 +21,7 @@ export class PostgresProductRepository implements ProductRepository {
 		name,
 		price_amount as amount,
 		price_currency as currency,
-		image_urls as imageUrls,
-		featured_review as featuredReview,
-        rating as rating
+		image_urls as imageUrls
 	FROM shop.products
 	WHERE id='${id.value}'
 	GROUP BY id
@@ -45,11 +40,7 @@ export class PostgresProductRepository implements ProductRepository {
 				amount: result.amount,
 				currency: result.currency,
 			},
-			result.imageUrls as unknown as string[],
-			(result.featuredReview as unknown as ProductFeaturedReviewPrimitives | null)?.rating
-				? (result.featuredReview as unknown as ProductFeaturedReviewPrimitives)
-				: null,
-			result.rating as unknown as number,
+			result.image_urls,
 		);
 	}
 
@@ -60,30 +51,23 @@ export class PostgresProductRepository implements ProductRepository {
                 name,
                 price_amount as amount,
                 price_currency as currency,
-                image_urls as imageUrls,
-                featured_review as featuredReview,
-                rating as rating
+                image_urls
             FROM shop.products
             GROUP BY id
 	`;
 
 		const result = await this.connection.searchAll<DatabaseProduct>(query);
 
-		return result.map(
-			(product) =>
-				new Product(
-					product.id,
-					product.name,
-					{
-						amount: product.amount,
-						currency: product.currency,
-					},
-					product.imageUrls as unknown as string[],
-					(product.featuredReview as unknown as ProductFeaturedReviewPrimitives | null)?.rating
-						? (product.featuredReview as unknown as ProductFeaturedReviewPrimitives)
-						: null,
-					product.rating as unknown as number,
-				),
+		return result.map((product) =>
+			Product.fromPrimitives({
+				id: product.id,
+				name: product.name,
+				price: {
+					amount: product.amount,
+					currency: product.currency,
+				},
+				imageUrls: product.image_urls,
+			}),
 		);
 	}
 }

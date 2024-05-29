@@ -4,12 +4,10 @@ import { faker } from "@faker-js/faker";
 import { ProductReview } from "../../../../../src/contexts/shop/product_reviews/domain/ProductReview";
 import { UserId } from "../../../../../src/contexts/shop/users/domain/UserId";
 import { ProductIdMother } from "../../products/domain/ProductIdMother";
-import { ProductReviewCommentMother } from "../../products/domain/ProductReviewCommentMother";
-import { ProductReviewRatingMother } from "../../products/domain/ProductReviewRatingMother";
 import { UserIdMother } from "../../users/domain/UserIdMother";
-import { UserNameMother } from "../../users/domain/UserNameMother";
-import { UserProfilePictureMother } from "../../users/domain/UserProfilePictureMother";
+import { ProductReviewCommentMother } from "./ProductReviewCommentMother";
 import { ProductReviewIdMother } from "./ProductReviewIdMother";
+import { ProductReviewRatingMother } from "./ProductReviewRatingMother";
 
 export class ProductReviewMother {
 	static create(params?: Partial<Primitives<ProductReview>>): ProductReview {
@@ -19,8 +17,6 @@ export class ProductReviewMother {
 			productId: ProductIdMother.create().value,
 			rating: ProductReviewRatingMother.create().value,
 			comment: ProductReviewCommentMother.create().value,
-			userName: UserNameMother.create().value,
-			userProfilePicture: UserProfilePictureMother.create().value,
 			...params,
 		};
 

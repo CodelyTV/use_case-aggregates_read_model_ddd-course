@@ -20,5 +20,5 @@ export async function GET(
 
 	const products = await searcher.search(id);
 
-	return NextResponse.json(products.map((product) => product.toPrimitives()));
+	return NextResponse.json(products.map((product) => product));
 }

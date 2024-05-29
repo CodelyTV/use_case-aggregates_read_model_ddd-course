@@ -6,10 +6,6 @@ export class ProductImageUrls extends Collection<ProductImageUrl> {
 		return new ProductImageUrls(imageUrls.map((imageUrl) => new ProductImageUrl(imageUrl)));
 	}
 
-	toJSON(): string {
-		return JSON.stringify(this.toPrimitives());
-	}
-
 	toPrimitives(): string[] {
 		return this.value.map((imageUrl) => imageUrl.value);
 	}

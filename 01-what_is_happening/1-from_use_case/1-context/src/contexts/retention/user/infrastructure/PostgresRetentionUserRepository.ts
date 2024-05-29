@@ -7,7 +7,7 @@ import { RetentionUserRepository } from "../domain/RetentionUserRepository";
 
 type DatabaseUser = {
 	id: string;
-	lastActivityDate: Date;
+	last_activity_date: Date;
 };
 
 @Service()
@@ -40,7 +40,7 @@ export class PostgresRetentionUserRepository extends RetentionUserRepository {
 
 		return RetentionUser.fromPrimitives({
 			id: result.id,
-			lastActivityDate: result.lastActivityDate,
+			lastActivityDate: result.last_activity_date,
 		});
 	}
 }

@@ -17,5 +17,5 @@ export async function GET(
 		return new Response("", { status: 404 });
 	}
 
-	return NextResponse.json(product.toPrimitives());
+	return NextResponse.json(product);
 }
