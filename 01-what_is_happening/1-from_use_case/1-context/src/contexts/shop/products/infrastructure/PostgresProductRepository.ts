@@ -14,6 +14,22 @@ type DatabaseProduct = {
 export class PostgresProductRepository implements ProductRepository {
 	constructor(private readonly connection: PostgresConnection) {}
 
+	async save(product: Product): Promise<void> {
+		await this.connection.execute(`
+INSERT INTO shop.products (id, name, price_amount, price_currency, image_urls)
+VALUES (
+	'${product.id.value}',
+	'${product.name.value}',
+	${product.price.amount},
+	'${product.price.currency}',
+	'{${product.imageUrls
+		.toPrimitives()
+		.map((url: string) => `"${url}"`)
+		.join(",")}}'
+)
+`);
+	}
+
 	async search(id: ProductId): Promise<Product | null> {
 		const query = `
 	SELECT
@@ -21,7 +37,7 @@ export class PostgresProductRepository implements ProductRepository {
 		name,
 		price_amount as amount,
 		price_currency as currency,
-		image_urls as imageUrls
+		image_urls
 	FROM shop.products
 	WHERE id='${id.value}'
 	GROUP BY id

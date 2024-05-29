@@ -3,7 +3,7 @@ import postgres from "postgres";
 export class PostgresConnection {
 	private sqlInstance: postgres.Sql | null = null;
 
-	private get sql(): postgres.Sql {
+	get sql(): postgres.Sql {
 		if (!this.sqlInstance) {
 			this.sqlInstance = postgres({
 				host: "localhost",
