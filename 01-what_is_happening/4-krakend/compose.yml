@@ -1,5 +1,5 @@
 services:
-  4_1_add_field-postgres:
+  1_4_add_field-postgres:
     image: postgres:latest
     restart: always
     environment:
@@ -12,7 +12,7 @@ services:
       - db_data:/var/lib/postgresql/data
       - ./databases:/docker-entrypoint-initdb.d
 
-  krakend:
+  1_4_krakend:
     image: devopsfaith/krakend:latest
     ports:
       - "8080:8080"
