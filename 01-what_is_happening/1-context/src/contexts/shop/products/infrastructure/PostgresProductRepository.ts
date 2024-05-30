@@ -43,21 +43,21 @@ VALUES (
 	GROUP BY id
   `;
 
-		const result = await this.connection.searchOne<DatabaseProduct>(query);
+		const product = await this.connection.searchOne<DatabaseProduct>(query);
 
-		if (!result) {
+		if (!product) {
 			return null;
 		}
 
-		return new Product(
-			result.id,
-			result.name,
-			{
-				amount: result.amount,
-				currency: result.currency,
+		return Product.fromPrimitives({
+			id: product.id,
+			name: product.name,
+			price: {
+				amount: product.amount,
+				currency: product.currency,
 			},
-			result.image_urls,
-		);
+			imageUrls: product.image_urls,
+		});
 	}
 
 	async searchAll(): Promise<Product[]> {
