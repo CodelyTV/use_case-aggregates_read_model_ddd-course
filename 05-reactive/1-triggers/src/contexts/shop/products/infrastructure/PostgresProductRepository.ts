@@ -6,7 +6,7 @@ import { ProductRepository } from "../domain/ProductRepository";
 type DatabaseProduct = {
 	id: string;
 	name: string;
-	price_amount: number;
+	price_amount: string;
 	price_currency: "EUR" | "USD";
 	image_urls: string[];
 	latest_top_reviews: {
@@ -49,13 +49,11 @@ WHERE id = '${id.value}';
 			return null;
 		}
 
-		console.log(product);
-
 		return Product.fromPrimitives({
 			id: product.id,
 			name: product.name,
 			price: {
-				amount: product.price_amount,
+				amount: parseFloat(product.price_amount),
 				currency: product.price_currency,
 			},
 			imageUrls: product.image_urls,
@@ -76,7 +74,7 @@ FROM shop.products;
 				id: product.id,
 				name: product.name,
 				price: {
-					amount: product.price_amount,
+					amount: parseFloat(product.price_amount),
 					currency: product.price_currency,
 				},
 				imageUrls: product.image_urls,
