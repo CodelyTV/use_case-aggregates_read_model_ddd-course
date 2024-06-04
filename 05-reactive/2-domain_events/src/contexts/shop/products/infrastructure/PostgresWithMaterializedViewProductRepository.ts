@@ -1,5 +1,3 @@
-import { Service } from "diod";
-
 import { PostgresConnection } from "../../../shared/infrastructure/PostgresConnection";
 import { Product } from "../domain/Product";
 import { ProductId } from "../domain/ProductId";
@@ -8,8 +6,8 @@ import { ProductRepository } from "../domain/ProductRepository";
 type DatabaseProduct = {
 	id: string;
 	name: string;
-	price_amount: string;
-	price_currency: "EUR" | "USD";
+	amount: string;
+	currency: "EUR" | "USD";
 	image_urls: string[];
 	latest_top_reviews: {
 		userName: string;
@@ -19,15 +17,12 @@ type DatabaseProduct = {
 	}[];
 };
 
-@Service()
-export class PostgresProductRepository implements ProductRepository {
+export class PostgresWithMaterializedViewProductRepository implements ProductRepository {
 	constructor(private readonly connection: PostgresConnection) {}
 
 	async save(product: Product): Promise<void> {
-		const productPrimitives = product.toPrimitives();
-
 		await this.connection.execute(`
-			INSERT INTO shop.products (id, name, price_amount, price_currency, image_urls, latest_top_reviews)
+			INSERT INTO shop.products (id, name, price_amount, price_currency, image_urls)
 			VALUES (
 				'${product.id.value}',
 				'${product.name.value}',
@@ -36,23 +31,15 @@ export class PostgresProductRepository implements ProductRepository {
 				'{${product.imageUrls
 					.toPrimitives()
 					.map((url: string) => `"${url}"`)
-					.join(",")}}',
-				'${JSON.stringify(productPrimitives.latestTopReviews)}'
+					.join(",")}}'
 		   )
-		   ON CONFLICT (id) DO UPDATE 
-		   SET 
-				name = EXCLUDED.name,
-				price_amount = EXCLUDED.price_amount,
-				price_currency = EXCLUDED.price_currency,
-				image_urls = EXCLUDED.image_urls,
-				latest_top_reviews = EXCLUDED.latest_top_reviews;
 		`);
 	}
 
 	async search(id: ProductId): Promise<Product | null> {
 		const query = `
-SELECT id, name, price_amount, price_currency, image_urls, latest_top_reviews
-FROM shop.products
+SELECT id, name, amount, currency, image_urls, latest_top_reviews
+FROM shop.product_with_reviews_materialized
 WHERE id = '${id.value}';
 		`;
 
@@ -66,18 +53,18 @@ WHERE id = '${id.value}';
 			id: product.id,
 			name: product.name,
 			price: {
-				amount: parseFloat(product.price_amount),
-				currency: product.price_currency,
+				amount: parseFloat(product.amount),
+				currency: product.currency,
 			},
 			imageUrls: product.image_urls,
-			latestTopReviews: product.latest_top_reviews ?? [],
+			latestTopReviews: product.latest_top_reviews,
 		});
 	}
 
 	async searchAll(): Promise<Product[]> {
 		const query = `
-SELECT id, name, price_amount, price_currency, image_urls, latest_top_reviews
-FROM shop.products;
+SELECT id, name, amount, currency, image_urls, latest_top_reviews
+FROM shop.product_with_reviews_materialized;
 		`;
 
 		const result = await this.connection.searchAll<DatabaseProduct>(query);
@@ -87,11 +74,11 @@ FROM shop.products;
 				id: product.id,
 				name: product.name,
 				price: {
-					amount: parseFloat(product.price_amount),
-					currency: product.price_currency,
+					amount: parseFloat(product.amount),
+					currency: product.currency,
 				},
 				imageUrls: product.image_urls,
-				latestTopReviews: product.latest_top_reviews ?? [],
+				latestTopReviews: product.latest_top_reviews,
 			}),
 		);
 	}

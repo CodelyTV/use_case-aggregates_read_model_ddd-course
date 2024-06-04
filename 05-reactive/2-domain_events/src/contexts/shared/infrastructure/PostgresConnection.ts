@@ -45,4 +45,8 @@ BEGIN
 END
 $$;`);
 	}
+
+	async refresh(productWithReviewsMaterialized: string): Promise<void> {
+		await this.execute(`REFRESH MATERIALIZED VIEW ${productWithReviewsMaterialized}`);
+	}
 }
