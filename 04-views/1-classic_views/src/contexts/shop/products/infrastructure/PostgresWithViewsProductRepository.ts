@@ -6,7 +6,7 @@ import { ProductRepository } from "../domain/ProductRepository";
 type DatabaseProduct = {
 	id: string;
 	name: string;
-	amount: number;
+	amount: string;
 	currency: "EUR" | "USD";
 	image_urls: string[];
 	latest_top_reviews: {
@@ -53,7 +53,7 @@ WHERE id = '${id.value}';
 			id: product.id,
 			name: product.name,
 			price: {
-				amount: product.amount,
+				amount: parseFloat(product.amount),
 				currency: product.currency,
 			},
 			imageUrls: product.image_urls,
@@ -74,7 +74,7 @@ FROM shop.product_with_reviews;
 				id: product.id,
 				name: product.name,
 				price: {
-					amount: product.amount,
+					amount: parseFloat(product.amount),
 					currency: product.currency,
 				},
 				imageUrls: product.image_urls,
