@@ -50,6 +50,28 @@ FROM shop.products p
 	LEFT JOIN shop.users u ON r.user_id = u.id
 GROUP BY p.id;
 
+CREATE MATERIALIZED VIEW shop.product_with_reviews_materialized AS
+SELECT
+	p.id,
+	p.name,
+	p.price_amount AS amount,
+	p.price_currency AS currency,
+	p.image_urls,
+	COALESCE(
+					json_agg(
+					json_build_object(
+							'userName', u.name,
+							'userProfilePictureUrl', u.profile_picture,
+							'reviewRating', r.rating,
+							'reviewComment', r.comment
+					) ORDER BY r.rating DESC
+							) FILTER (WHERE r.id IS NOT NULL AND r.rating >= 4), '[]'
+	) AS latest_top_reviews
+FROM shop.products p
+		 LEFT JOIN shop.product_reviews r ON p.id = r.product_id
+		 LEFT JOIN shop.users u ON r.user_id = u.id
+GROUP BY p.id;
+
 
 -----------------------------------------
 -- TRIGGERS

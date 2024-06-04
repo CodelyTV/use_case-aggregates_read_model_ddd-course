@@ -17,7 +17,7 @@ type DatabaseProduct = {
 	}[];
 };
 
-export class PostgresWithViewsProductRepository implements ProductRepository {
+export class PostgresWithMaterializedViewProductRepository implements ProductRepository {
 	constructor(private readonly connection: PostgresConnection) {}
 
 	async save(product: Product): Promise<void> {
@@ -39,7 +39,7 @@ export class PostgresWithViewsProductRepository implements ProductRepository {
 	async search(id: ProductId): Promise<Product | null> {
 		const query = `
 SELECT id, name, amount, currency, image_urls, latest_top_reviews
-FROM shop.product_with_reviews
+FROM shop.product_with_reviews_materialized
 WHERE id = '${id.value}';
 		`;
 
@@ -64,7 +64,7 @@ WHERE id = '${id.value}';
 	async searchAll(): Promise<Product[]> {
 		const query = `
 SELECT id, name, amount, currency, image_urls, latest_top_reviews
-FROM shop.product_with_reviews;
+FROM shop.product_with_reviews_materialized;
 		`;
 
 		const result = await this.connection.searchAll<DatabaseProduct>(query);
