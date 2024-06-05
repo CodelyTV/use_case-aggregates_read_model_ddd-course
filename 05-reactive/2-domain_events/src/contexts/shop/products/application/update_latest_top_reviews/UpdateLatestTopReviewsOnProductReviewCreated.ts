@@ -12,6 +12,8 @@ export class UpdateLatestTopReviewsOnProductReviewCreated
 	constructor(private readonly updater: ProductLatestTopReviewsUpdater) {}
 
 	async on(event: ProductReviewCreatedDomainEvent): Promise<void> {
+		console.log(`   Review rating: ${event.rating}`);
+
 		await this.updater.update(event.productId, event.userId, event.rating, event.comment);
 	}
 

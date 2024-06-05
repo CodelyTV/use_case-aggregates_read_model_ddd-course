@@ -40,6 +40,8 @@ function consume(subscriber: DomainEventSubscriber<DomainEvent>) {
 		const content = message.content.toString();
 		const domainEvent = deserializer.deserialize(content);
 
+		console.log("📥 Consuming domain event", domainEvent.eventName);
+
 		try {
 			await subscriber.on(domainEvent);
 		} catch (error) {
