@@ -48,7 +48,7 @@ test.describe("Get product", () => {
 			id: primitives.id,
 			name: primitives.name,
 			price: {
-				amount: primitives.price.amount.toString(),
+				amount: primitives.price.amount,
 				currency: primitives.price.currency,
 			},
 			imageUrls: primitives.imageUrls,
