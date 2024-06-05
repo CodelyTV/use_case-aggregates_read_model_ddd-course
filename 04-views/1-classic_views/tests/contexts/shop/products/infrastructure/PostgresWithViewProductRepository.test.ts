@@ -1,16 +1,16 @@
 import { PostgresConnection } from "../../../../../src/contexts/shared/infrastructure/PostgresConnection";
 import { PostgresProductReviewRepository } from "../../../../../src/contexts/shop/product_reviews/infrastructure/PostgresProductReviewRepository";
-import { PostgresWithViewsProductRepository } from "../../../../../src/contexts/shop/products/infrastructure/PostgresWithViewsProductRepository";
+import { PostgresWithViewProductRepository } from "../../../../../src/contexts/shop/products/infrastructure/PostgresWithViewProductRepository";
 import { PostgresUserRepository } from "../../../../../src/contexts/shop/users/infrastructure/PostgresUserRepository";
 import { ProductReviewMother } from "../../product_reviews/domain/ProductReviewMother";
 import { UserMother } from "../../users/domain/UserMother";
 import { ProductIdMother } from "../domain/ProductIdMother";
 import { ProductMother } from "../domain/ProductMother";
 
-describe("PostgresWithViewsProductRepository should", () => {
+describe("PostgresWithViewProductRepository should", () => {
 	const connection = new PostgresConnection();
 
-	const repository = new PostgresWithViewsProductRepository(connection);
+	const repository = new PostgresWithViewProductRepository(connection);
 
 	const userRepository = new PostgresUserRepository(connection);
 	const reviewRepository = new PostgresProductReviewRepository(connection);

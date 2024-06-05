@@ -17,7 +17,7 @@ type DatabaseProduct = {
 	}[];
 };
 
-export class PostgresWithViewsProductRepository implements ProductRepository {
+export class PostgresWithViewProductRepository implements ProductRepository {
 	constructor(private readonly connection: PostgresConnection) {}
 
 	async save(product: Product): Promise<void> {
