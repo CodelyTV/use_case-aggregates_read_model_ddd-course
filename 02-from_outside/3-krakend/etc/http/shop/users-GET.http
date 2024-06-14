@@ -1,0 +1,1 @@
+GET http://localhost:3000/api/shop/users?ids=f4555bb0-c743-44f6-92a3-376e0f90df06,7e685cd9-1195-4bb8-ab10-02d4c5c36960

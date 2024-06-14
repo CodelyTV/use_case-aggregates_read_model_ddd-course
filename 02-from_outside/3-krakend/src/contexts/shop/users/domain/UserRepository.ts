@@ -5,4 +5,6 @@ export interface UserRepository {
 	save(user: User): Promise<void>;
 
 	search(id: UserId): Promise<User | null>;
+
+	byIds(id: UserId[]): Promise<User[]>;
 }

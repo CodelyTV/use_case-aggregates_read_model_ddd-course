@@ -44,4 +44,19 @@ export class PostgresUserRepository implements UserRepository {
 			profilePicture: result.profile_picture,
 		});
 	}
+
+	async byIds(id: UserId[]): Promise<User[]> {
+		const query = `SELECT id, name, email, profile_picture FROM shop.users WHERE id in (${id.map((id) => `'${id.value}'`).join(", ")});`;
+
+		const result = await this.connection.searchAll<DatabaseUser>(query);
+
+		return result.map((user) =>
+			User.fromPrimitives({
+				id: user.id,
+				name: user.name,
+				email: user.email,
+				profilePicture: user.profile_picture,
+			}),
+		);
+	}
 }
