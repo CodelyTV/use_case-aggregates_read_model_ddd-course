@@ -2,41 +2,99 @@
 	"version": 3,
 	"name": "ecommerce-gateway",
 	"port": 8080,
+	"host": ["http://host.docker.internal:3000"],
 	"endpoints": [
 		{
-			"endpoint": "/shop/products/{id}",
-			"method": "GET",
+			"endpoint": "/shop/products-with-lua/{id}",
 			"backend": [
 				{
-					"host": [
-						"http://host.docker.internal:3000"
-					],
 					"url_pattern": "/api/shop/products/{id}"
 				},
 				{
-					"host": [
-						"http://host.docker.internal:3000"
-					],
 					"url_pattern": "/api/shop/product_reviews?product_id={id}",
 					"is_collection": true,
+					"mapping": {
+						"collection": "reviews"
+					},
 					"extra_config": {
-						"proxy": {
-							"flatmap_filter": [
-								{ "type": "del", "args": ["collection.*.productId"] },
-								{ "type": "del", "args": ["collection.*.id"] },
-								{
-									"type": "move",
-									"args": ["collection", "latestTopReviews"]
-								}
-							]
-						},
-						"modifier/jmespath": {
-							"@comment": "Only works on enterprise edition",
-							"expr": "latestTopReviews[?rating >= `4` ]"
+						"modifier/lua-backend": {
+							"allow_open_libs": true,
+							"sources": ["./json.lua","./merge_reviewers.lua"],
+							"live": true,
+							"post": "merge_reviewers(response.load())"
 						}
 					}
 				}
 			]
+		},
+		{
+			"endpoint": "/shop/products/{id}",
+			"backend": [
+				{
+					"url_pattern": "/api/shop/products/{id}",
+					"group": "product_details"
+				},
+				{
+					"url_pattern": "/api/shop/product_reviews?product_id={id}",
+					"is_collection": true,
+					"extra_config": {
+						"modifier/jmespath": {
+							"@comment": "Only works on enterprise edition",
+							"expr": "{ latestTopReviews: collection[?rating >= `4`] }"
+						},
+						"qos/http-cache": {
+							"shared": true
+						}
+					}
+				},
+				{
+					"host": [
+						"http://localhost:8080"
+					],
+					"url_pattern": "/__internal/shop/products/{id}/users-from-reviews",
+					"mapping": {
+						"users_list": "latestTopReviewsUsers"
+					},
+					"deny": [
+						"users"
+					]
+				}
+			],
+			"extra_config": {
+				"modifier/jmespath": {
+					"expr": "{ product: product_details, reviews: { ratings: latestTopReviews, users: latestTopReviewsUsers } }"
+				}
+			}
+		},
+		{
+			"endpoint": "/__internal/shop/products/{id}/users-from-reviews",
+			"backend": [
+				{
+					"url_pattern": "/api/shop/product_reviews?product_id={id}",
+					"is_collection": true,
+					"extra_config": {
+						"modifier/jmespath": {
+							"@comment": "Only works on enterprise edition",
+							"expr": "{users: collection[?rating >= `4`].userId | join (',', @)}"
+						},
+						"qos/http-cache": {
+							"shared": true
+						}
+					}
+				},
+				{
+					"url_pattern": "/api/shop/users?ids={resp0_users}",
+					"is_collection": true,
+					"mapping": {
+						"collection": "users_list"
+					}
+				}
+			],
+			"extra_config": {
+				"proxy": {
+					"sequential": true
+				}
+			}
 		}
 	]
 }

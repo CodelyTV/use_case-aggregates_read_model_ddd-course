@@ -13,12 +13,13 @@ services:
       - ./databases:/docker-entrypoint-initdb.d
 
   1_4_krakend:
-    image: devopsfaith/krakend:latest
+    image: devopsfaith/krakend:watch
+    #image: krakend/krakend-ee:watch
     ports:
       - "8080:8080"
     volumes:
       - ./etc/krakend:/etc/krakend
-    command: krakend run --config /etc/krakend/krakend.json
+    command: ["run", "-d", "-c", "krakend.json"]
 
 volumes:
   db_data:
