@@ -1,11 +1,16 @@
 <p align="center">
   <a href="https://codely.com">
-    <img src="https://user-images.githubusercontent.com/10558907/170513882-a09eee57-7765-4ca4-b2dd-3c2e061fdad0.png" width="300px" height="92px" alt="Codely logo"/>
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://codely.com/logo/codely_logo-dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://codely.com/logo/codely_logo-light.svg">
+      <img alt="Codely logo" src="https://codely.com/logo/codely_logo.svg">
+    </picture>
   </a>
 </p>
 
+
 <h1 align="center">
-    {COURSE_EMOJI} {COURSE_NAME_IN_ENGLISH}
+    📑 Practical case: Aggregates and Read Model in DDD
 </h1>
 
 <p align="center">
@@ -14,10 +19,10 @@
 </p>
 
 <p align="center">
-    {COURSE_SUMMARY_IN_ENGLISH}
+    Implement Aggregates in a maintainable, scalable, and testable way.
 </p>
 
 <p align="center">
   <a href="https://github.com/CodelyTV/{REPOSITORY_NAME}/stargazers">Stars are welcome 😊</a><br><br>
-  Course (Spanish): <a href="{COURSE_URL}">{COURSE_NAME_IN_SPANISH}</a>
+  Course (Spanish): <a href="https://pro.codely.com/library/caso-practico-agregados-y-read-model-en-ddd-229999">Caso práctico: Agregados y Read Model en DDD</a>
 </p>
