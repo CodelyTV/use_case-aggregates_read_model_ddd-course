@@ -23,6 +23,6 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/CodelyTV/{REPOSITORY_NAME}/stargazers">Stars are welcome 😊</a><br><br>
+  <a href="https://github.com/CodelyTV/use_case-aggregates_read_model_ddd-course/stargazers">Stars are welcome 😊</a><br><br>
   Course (Spanish): <a href="https://pro.codely.com/library/caso-practico-agregados-y-read-model-en-ddd-229999">Caso práctico: Agregados y Read Model en DDD</a>
 </p>
